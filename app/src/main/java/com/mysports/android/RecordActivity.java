@@ -65,8 +65,14 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
     private TraceOverlay mTraceoverlay;
     private TextView mResultShow;
     private Marker mlocMarker;
+
+    //悬浮显示数据
     private TextView speed;
     private TextView hour;
+    private TextView cal;
+
+    private Thread thread;
+    private boolean threadFlag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +83,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         initpolyline();
         speed = (TextView) findViewById(R.id.speed);
         hour = (TextView) findViewById(R.id.hour);
+        cal = (TextView) findViewById(R.id.cal);
     }
     public static  final int UPDATE_TEXT = 1;
 
@@ -85,16 +92,20 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UPDATE_TEXT:
-                        mOverlayList.add(mTraceoverlay);
-                        DecimalFormat decimalFormat = new DecimalFormat("0.0");
-                        mResultShow.setText("运动里程:"+
-                                decimalFormat.format(+getTotalDistance()) + "M");
-                        long tempTime = System.currentTimeMillis();
-                        Log.d("Runable", ""+tempTime);
-                        hour.setText("时间:"+((tempTime-mStartTime)/1000)+"S");
-                        speed.setText("速度:"+(getTotalDistance()/(tempTime-mStartTime+1))+"M/S");
+                    mEndTime = System.currentTimeMillis();
+                    mOverlayList.add(mTraceoverlay);
+                    DecimalFormat decimalFormat = new DecimalFormat("0.0");
+                    LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
+                    mTraceClient.queryProcessedTrace(2, Util.parseTraceLocationList(record.getPathline()) , LBSTraceClient.TYPE_AMAP, RecordActivity.this);
+                    float distance = getDistance(record.getPathline());
+                    //刷新数据
+                    mResultShow.setText("运动里程:"+ decimalFormat.format(distance) + "M");
 
-                        break;
+                    hour.setText("时间:"+((mEndTime-mStartTime)/1000)+"S");
+                    float speedn = distance/((mEndTime-mStartTime)/1000);
+                    speed.setText("速度:"+decimalFormat.format(distance)+"M/s");
+                    cal.setText("卡路里消耗:"+decimalFormat.format(kcal(80,distance))+"kcal");
+                    break;
                     default:
                         break;
 
@@ -102,13 +113,32 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         }
     };
 
+    private double kcal(float weight,float distance) {
+        return weight*1.036*distance/1000; //kcal
+    }
+    //实时显示线程
+    private class showThread extends Thread{
+        @Override
+        public void run() {
+            super.run();
+            while (threadFlag) {
+                try {
+                    Thread.sleep(1000);
+                    Message msg = new Message();
+                    msg.what = UPDATE_TEXT;
+                    handler.sendMessage(msg);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void init() {
         if (mAMap == null) {
             mAMap = mMapView.getMap();
             setUpMap();
         }
-
-
         btn = (ToggleButton) findViewById(R.id.locationbtn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,27 +148,20 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     if (record != null) {
                         record = null;
                     }
+                    //初始记录数据设置
                     record = new PathRecord();
                     mStartTime = System.currentTimeMillis();
                     record.setDate(getcueDate(mStartTime));
                     mResultShow.setText("运动里程:");
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while (true){
-                                try{
-                                    Thread.sleep(1000);
-                                    Message message = new Message();
-                                    message.what = UPDATE_TEXT;
-                                    handler.sendMessage(message);
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                            }
 
-                        }
-                    }).start();
+                    //启动线程
+                    thread = new showThread();
+                    threadFlag = true;
+                    thread.start();
+
                 } else {
+                    threadFlag = false; //关闭实时显示线程
+
                     mEndTime = System.currentTimeMillis();
                     mOverlayList.add(mTraceoverlay);
                     DecimalFormat decimalFormat = new DecimalFormat("0.0");
@@ -154,6 +177,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         mTraceoverlay = new TraceOverlay(mAMap);
     }
 
+    //存储记录到本机
     protected void saveRecord(List<AMapLocation> list, String time) {
         if (list != null && list.size() > 0) {
             DbHepler = new DbAdapter(this);
@@ -175,14 +199,18 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         }
     }
 
+    //数据计算
+    //运动时间
     private String getDuration() {
         return String.valueOf((mEndTime - mStartTime) / 1000f);
     }
 
+    //速度
     private String getAverage(float distance) {
         return String.valueOf(distance / (float) (mEndTime - mStartTime));
     }
 
+    //里程
     private float getDistance(List<AMapLocation> list) {
         float distance = 0;
         if (list == null || list.size() == 0) {
@@ -238,49 +266,43 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         tracePolytion.setCustomTexture(BitmapDescriptorFactory.fromResource(R.drawable.grasp_trace_line));
     }
 
+    //Amap参数设置
     private void setUpMap() {
         mAMap.setLocationSource(this);// 设置定位监听
         mAMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
         mAMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         // 设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
         mAMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
+        //mAMap.moveCamera(CameraUpdateFactory.zoomTo(12));
     }
-    /**
-     * 方法必须重写
-     */
+
+
+    //生命周期方法覆盖
     @Override
     protected void onResume() {
         super.onResume();
         mMapView.onResume();
     }
 
-    /**
-     * 方法必须重写
-     */
     @Override
     protected void onPause() {
         super.onPause();
         mMapView.onPause();
     }
 
-    /**
-     * 方法必须重写
-     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mMapView.onSaveInstanceState(outState);
     }
 
-    /**
-     * 方法必须重写
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
     }
 
+    //接口实现
     @Override
     public void activate(OnLocationChangedListener listener) {
         mListener = listener;
@@ -307,7 +329,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                         amapLocation.getLongitude());
                 mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mylocation));
                 if (btn.isChecked()) {
-                    record.addpoint(amapLocation);
+                    record.addpoint(amapLocation); //移动后记录点
                     mPolyoptions.add(mylocation);
                     mTracelocationlist.add(Util.parseTraceLocation(amapLocation));
                     redrawline();
@@ -373,6 +395,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         return date;
     }
 
+    //运动记录按钮跳转
     public void record(View view) {
         Intent intent = new Intent(RecordActivity.this, RecordListActivity.class);
         startActivity(intent);
