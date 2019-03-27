@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextPaint;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -30,11 +31,22 @@ public class MainActivity extends AppCompatActivity {
     private MapView mapView;
 
     private LocationUtil locationUtil;
+
+    private Button startRun;
+    private Button recordList;
+    private Button tip;
+
+    private void init() {
+        startRun = (Button) findViewById(R.id.start_run);
+        recordList = (Button) findViewById(R.id.record_list);
+        tip = (Button) findViewById(R.id.toast);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button btn = (Button) findViewById(R.id.btn);
+        init();
+        
         //权限申请
         List<String> permissionList = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -53,11 +65,26 @@ public class MainActivity extends AppCompatActivity {
             //locationUtil.requestLocation();
         }
 
-        btn.setOnClickListener(new View.OnClickListener() {
+        startRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,RecordActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        recordList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,RecordListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        tip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this,"info:2019.3.27:19:13:Jrh",Toast.LENGTH_SHORT).show();
             }
         });
     }

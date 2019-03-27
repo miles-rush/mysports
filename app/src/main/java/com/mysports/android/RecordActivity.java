@@ -172,6 +172,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             mAMap = mMapView.getMap();
             setUpMap();
         }
+
         btn = (ToggleButton) findViewById(R.id.locationbtn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,10 +205,14 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     mOverlayList.add(mTraceoverlay);
                     DecimalFormat decimalFormat = new DecimalFormat("0.0");
                     mResultShow.setText("运动里程"+ decimalFormat.format(getTotalDistance()) + "M");
-                    LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
-                    //lineID=2
-                    mTraceClient.queryProcessedTrace(2, Util.parseTraceLocationList(record.getPathline()) , LBSTraceClient.TYPE_AMAP, RecordActivity.this);
-                    //saveRecord(record.getPathline(), record.getDate());
+
+                    if (trachChooseBtn.isChecked()) {
+                        LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
+                        //lineID=2
+                        mTraceClient.queryProcessedTrace(2, Util.parseTraceLocationList(record.getPathline()) , LBSTraceClient.TYPE_AMAP, RecordActivity.this);
+                    }
+
+                    saveRecord(record.getPathline(), record.getDate());
                 }
             }
         });
@@ -301,8 +306,10 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
     private void initpolyline() {
         //原始路径
         mPolyoptions = new PolylineOptions();
-        mPolyoptions.width(20f);
-        mPolyoptions.color(Color.GRAY);
+//        mPolyoptions.width(20f);
+//        mPolyoptions.color(Color.GRAY);
+        mPolyoptions.width(25);
+        mPolyoptions.color(Color.parseColor("#FFC125")); //混淆原始路径和平滑后路径
 
         //平滑
         smoothPolytion = new PolylineOptions();
@@ -384,7 +391,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
                     mPolyoptions.add(mylocation); //LatLng坐标 当前坐标
 
-                    mTracelocationlist.add(Util.parseTraceLocation(amapLocation));
+                    mTracelocationlist.add(Util.parseTraceLocation(amapLocation)); //纠偏坐标集合
                     redrawline(); //原始轨迹
                     if (mTracelocationlist.size() > tracesize - 1) {
                         if (trachChooseBtn.isChecked()) {
@@ -443,7 +450,8 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
             //平滑处理后轨迹
             List<LatLng> list = mPolyoptions.getPoints();
-            mAMap.addPolyline(smoothPolytion.addAll(list));
+            mpolyline = mAMap.addPolyline(smoothPolytion.addAll(pathOptimize(list)));
+
         }
 //		if (mpolyline != null) {
 //			mpolyline.remove();
@@ -524,7 +532,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         } else if (lineID == 2) {
             if (linepoints != null && linepoints.size()>0) {
                 mAMap.addPolyline(new PolylineOptions()  //绘制折线
-                        .color(Color.RED)
+                        .color(Color.parseColor("#8470FF"))
                         .width(40).addAll(linepoints));
             }
         }

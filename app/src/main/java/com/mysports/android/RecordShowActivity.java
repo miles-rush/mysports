@@ -356,8 +356,8 @@ public class RecordShowActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onRequestFailed(int arg0, String arg1) {
-        Toast.makeText(this.getApplicationContext(), "轨迹纠偏失败:" + arg1,
+    public void onRequestFailed(int arg0, String arg1) { //arg1 返回错误信息
+        Toast.makeText(this.getApplicationContext(), "骑行轨迹优化失败",
                 Toast.LENGTH_SHORT).show();
 
     }
