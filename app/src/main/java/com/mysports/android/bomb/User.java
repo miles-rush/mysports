@@ -1,5 +1,8 @@
 package com.mysports.android.bomb;
 
 
-public class User {
+import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobUser;
+
+public class User extends BmobUser {
 }

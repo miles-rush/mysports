@@ -16,9 +16,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!--保持CPU 运转，屏幕和键盘灯有可能是关闭的,用于文件上传和下载 -->
+    <!-- 保持CPU 运转，屏幕和键盘灯有可能是关闭的,用于文件上传和下载 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-   
 
     <application
         android:allowBackup="true"
@@ -40,13 +39,13 @@
         </activity>
         <activity android:name=".RecordActivity" />
         <activity android:name=".RecordListActivity" />
-        <activity android:name=".RecordShowActivity"></activity>
+        <activity android:name=".RecordShowActivity" />
 
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
-            android:authorities="com.mysports.android.BmobContentProvider">
-        </provider>
+            android:authorities="com.mysports.android.BmobContentProvider"></provider>
+
+        <activity android:name=".IndexActivity"></activity>
     </application>
-    
 
 </manifest>
