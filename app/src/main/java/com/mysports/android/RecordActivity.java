@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -34,6 +35,7 @@ import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
 import com.mysports.android.map.DbAdapter;
 import com.mysports.android.map.PathRecord;
+import com.mysports.android.map.PathSmoothTool;
 import com.mysports.android.map.Util;
 
 import java.text.DecimalFormat;
@@ -48,31 +50,47 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
     private MapView mMapView;
     private AMap mAMap;
     private OnLocationChangedListener mListener;
+
     private AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
-    private PolylineOptions mPolyoptions, tracePolytion;
+
+    private PolylineOptions mPolyoptions, tracePolytion, smoothPolytion; //原始 纠偏 平滑
     private Polyline mpolyline;
+
     private PathRecord record;
+
     private long mStartTime;
     private long mEndTime;
+
     private ToggleButton btn;
     private DbAdapter DbHepler;
-    private List<TraceLocation> mTracelocationlist = new ArrayList<TraceLocation>();
+
+    private List<TraceLocation> mTracelocationlist = new ArrayList<TraceLocation>(); //每次清空
     private List<TraceOverlay> mOverlayList = new ArrayList<TraceOverlay>();
     private List<AMapLocation> recordList = new ArrayList<AMapLocation>();
+
     private int tracesize = 30;
     private int mDistance = 0;
-    private TraceOverlay mTraceoverlay;
+
+    private TraceOverlay mTraceoverlay; //用于绘制轨迹纠偏接口回调的一条平滑轨迹
     private TextView mResultShow;
     private Marker mlocMarker;
 
     //悬浮显示数据
-    private TextView speed;
-    private TextView hour;
-    private TextView cal;
+    private TextView speed; //速度
+    private TextView hour; //运动时间
+    private TextView cal; //卡路里消耗
+    private TextView altitude; //海拔高度
+    private TextView speed_hour; //每公里时速
+    private double altitude_num;
 
     private Thread thread;
     private boolean threadFlag;
+
+    private PathSmoothTool mpathSmoothTool;
+
+    private CheckBox trachChooseBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,10 +99,11 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         mMapView.onCreate(savedInstanceState);// 此方法必须重写
         init();
         initpolyline();
-        speed = (TextView) findViewById(R.id.speed);
-        hour = (TextView) findViewById(R.id.hour);
-        cal = (TextView) findViewById(R.id.cal);
+
+
     }
+
+
     public static  final int UPDATE_TEXT = 1;
 
     private Handler handler = new Handler(){
@@ -93,18 +112,19 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             switch (msg.what) {
                 case UPDATE_TEXT:
                     mEndTime = System.currentTimeMillis();
-                    mOverlayList.add(mTraceoverlay);
+                    //mOverlayList.add(mTraceoverlay);
                     DecimalFormat decimalFormat = new DecimalFormat("0.0");
-                    LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
-                    mTraceClient.queryProcessedTrace(2, Util.parseTraceLocationList(record.getPathline()) , LBSTraceClient.TYPE_AMAP, RecordActivity.this);
+                    //LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
+                    //mTraceClient.queryProcessedTrace(2, Util.parseTraceLocationList(record.getPathline()) , LBSTraceClient.TYPE_AMAP, RecordActivity.this);
                     float distance = getDistance(record.getPathline());
                     //刷新数据
                     mResultShow.setText("运动里程:"+ decimalFormat.format(distance) + "M");
 
                     hour.setText("时间:"+((mEndTime-mStartTime)/1000)+"S");
                     float speedn = distance/((mEndTime-mStartTime)/1000);
-                    speed.setText("速度:"+decimalFormat.format(distance)+"M/s");
+                    speed.setText("速度:"+decimalFormat.format(speedn)+"M/s");
                     cal.setText("卡路里消耗:"+decimalFormat.format(kcal(80,distance))+"kcal");
+                    altitude.setText("海拔:"+altitude_num);
                     break;
                     default:
                         break;
@@ -116,6 +136,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
     private double kcal(float weight,float distance) {
         return weight*1.036*distance/1000; //kcal
     }
+
     //实时显示线程
     private class showThread extends Thread{
         @Override
@@ -134,7 +155,19 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         }
     }
 
+    //部分初始化
     private void init() {
+
+        mpathSmoothTool = new PathSmoothTool();
+        mpathSmoothTool.setIntensity(4);
+
+        trachChooseBtn = (CheckBox) findViewById(R.id.trace_choose);
+        speed = (TextView) findViewById(R.id.speed);
+        hour = (TextView) findViewById(R.id.hour);
+        cal = (TextView) findViewById(R.id.cal);
+        altitude = (TextView) findViewById(R.id.altitude);
+        speed_hour = (TextView) findViewById(R.id.speed_hour);
+
         if (mAMap == null) {
             mAMap = mMapView.getMap();
             setUpMap();
@@ -148,6 +181,10 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     if (record != null) {
                         record = null;
                     }
+                    //重启启动后对原有数据进行清空
+                    mPolyoptions.getPoints().clear();
+                    smoothPolytion.getPoints().clear();
+
                     //初始记录数据设置
                     record = new PathRecord();
                     mStartTime = System.currentTimeMillis();
@@ -161,19 +198,21 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
                 } else {
                     threadFlag = false; //关闭实时显示线程
+                    thread.interrupt();
 
                     mEndTime = System.currentTimeMillis();
                     mOverlayList.add(mTraceoverlay);
                     DecimalFormat decimalFormat = new DecimalFormat("0.0");
                     mResultShow.setText("运动里程"+ decimalFormat.format(getTotalDistance()) + "M");
                     LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
+                    //lineID=2
                     mTraceClient.queryProcessedTrace(2, Util.parseTraceLocationList(record.getPathline()) , LBSTraceClient.TYPE_AMAP, RecordActivity.this);
                     //saveRecord(record.getPathline(), record.getDate());
                 }
             }
         });
-        mResultShow = (TextView) findViewById(R.id.show_all_dis);
 
+        mResultShow = (TextView) findViewById(R.id.show_all_dis);
         mTraceoverlay = new TraceOverlay(mAMap);
     }
 
@@ -230,6 +269,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         return distance;
     }
 
+    //路径信息
     private String getPathLineString(List<AMapLocation> list) {
         if (list == null || list.size() == 0) {
             return "";
@@ -257,10 +297,19 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         return locString.toString();
     }
 
+    //初始化折线选项对象
     private void initpolyline() {
+        //原始路径
         mPolyoptions = new PolylineOptions();
-        mPolyoptions.width(10f);
+        mPolyoptions.width(20f);
         mPolyoptions.color(Color.GRAY);
+
+        //平滑
+        smoothPolytion = new PolylineOptions();
+        smoothPolytion.width(25);
+        smoothPolytion.color(Color.parseColor("#FFC125"));
+
+        //纠偏后路径
         tracePolytion = new PolylineOptions();
         tracePolytion.width(40);
         tracePolytion.setCustomTexture(BitmapDescriptorFactory.fromResource(R.drawable.grasp_trace_line));
@@ -273,7 +322,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         mAMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         // 设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
         mAMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
-        //mAMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+        mAMap.moveCamera(CameraUpdateFactory.zoomTo(18)); //缩放调整
     }
 
 
@@ -326,15 +375,22 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             if (amapLocation != null && amapLocation.getErrorCode() == 0) {
                 mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
                 LatLng mylocation = new LatLng(amapLocation.getLatitude(),
-                        amapLocation.getLongitude());
+                        amapLocation.getLongitude()); //当前坐标
+                altitude_num = amapLocation.getAltitude(); //更新当前海拔高度
                 mAMap.moveCamera(CameraUpdateFactory.changeLatLng(mylocation));
+                //定位监听 按钮点击后录制坐标点
                 if (btn.isChecked()) {
                     record.addpoint(amapLocation); //移动后记录点
-                    mPolyoptions.add(mylocation);
+
+                    mPolyoptions.add(mylocation); //LatLng坐标 当前坐标
+
                     mTracelocationlist.add(Util.parseTraceLocation(amapLocation));
-                    redrawline();
+                    redrawline(); //原始轨迹
                     if (mTracelocationlist.size() > tracesize - 1) {
-                        trace();
+                        if (trachChooseBtn.isChecked()) {
+                            trace(); //判断是否选中骑行优化
+                        }
+                        //trace(); //开始纠偏-实时
                     }
                 }
             } else {
@@ -368,13 +424,26 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
     }
 
 
+    //轨迹平滑优化
+    public List<LatLng> pathOptimize(List<LatLng> originlist){
+        List<LatLng> pathoptimizeList = mpathSmoothTool.pathOptimize(originlist);
+//        mkalmanPolyline = mAMap.addPolyline(
+//                new PolylineOptions().addAll(pathoptimizeList).color(Color.parseColor("#FFC125")));
+        return pathoptimizeList;
+    }
+
+    //绘制直线
     private void redrawline() {
         if (mPolyoptions.getPoints().size() > 1) {
             if (mpolyline != null) {
-                mpolyline.setPoints(mPolyoptions.getPoints());
+                mpolyline.setPoints(mPolyoptions.getPoints());  //mpolyline是LatLng坐标系
             } else {
                 mpolyline = mAMap.addPolyline(mPolyoptions);
             }
+
+            //平滑处理后轨迹
+            List<LatLng> list = mPolyoptions.getPoints();
+            mAMap.addPolyline(smoothPolytion.addAll(list));
         }
 //		if (mpolyline != null) {
 //			mpolyline.remove();
@@ -401,20 +470,18 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         startActivity(intent);
     }
 
+    //轨迹纠偏 自有轨迹
     private void trace() {
         List<TraceLocation> locationList = new ArrayList<>(mTracelocationlist);
         LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
+        //lineID=1
         mTraceClient.queryProcessedTrace(1, locationList, LBSTraceClient.TYPE_AMAP, this);
         TraceLocation lastlocation = mTracelocationlist.get(mTracelocationlist.size()-1);
-        mTracelocationlist.clear();
+        mTracelocationlist.clear(); //纠偏轨迹列表清空操作
         mTracelocationlist.add(lastlocation);
     }
 
-    /**
-     * 轨迹纠偏失败回调。
-     * @param i
-     * @param s
-     */
+    //轨迹纠偏失败回调
     @Override
     public void onRequestFailed(int i, String s) {
         mOverlayList.add(mTraceoverlay);
@@ -440,6 +507,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                 mTraceoverlay.add(linepoints);
                 mDistance += distance;
                 mTraceoverlay.setDistance(mTraceoverlay.getDistance()+distance);
+                //绘制标记 用于在地图上显示路径距离
                 if (mlocMarker == null) {
                     mlocMarker = mAMap.addMarker(new MarkerOptions().position(linepoints.get(linepoints.size() - 1))
                             .icon(BitmapDescriptorFactory
@@ -455,7 +523,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             }
         } else if (lineID == 2) {
             if (linepoints != null && linepoints.size()>0) {
-                mAMap.addPolyline(new PolylineOptions()
+                mAMap.addPolyline(new PolylineOptions()  //绘制折线
                         .color(Color.RED)
                         .width(40).addAll(linepoints));
             }
@@ -463,10 +531,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
     }
 
-    /**
-     * 最后获取总距离
-     * @return
-     */
+    //总距离计算
     private int getTotalDistance() {
         int distance = 0;
         for (TraceOverlay to : mOverlayList) {

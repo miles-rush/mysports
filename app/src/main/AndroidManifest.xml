@@ -35,7 +35,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".RecordActivity" />
-        <activity android:name=".RecordListActivity"></activity>
+        <activity android:name=".RecordListActivity" />
+        <activity android:name=".RecordShowActivity"></activity>
     </application>
 
 </manifest>

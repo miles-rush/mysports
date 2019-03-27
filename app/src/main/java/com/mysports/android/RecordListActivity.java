@@ -50,7 +50,7 @@ public class RecordListActivity extends AppCompatActivity implements OnItemClick
         PathRecord recorditem = (PathRecord) parent.getAdapter().getItem(
                 position);
         Intent intent = new Intent(RecordListActivity.this,
-                MainActivity.class);
+                RecordShowActivity.class);
         intent.putExtra(RECORD_ID, recorditem.getId());
         startActivity(intent);
     }

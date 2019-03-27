@@ -24,6 +24,14 @@
             android:textOff="开始"> 
         </ToggleButton>
 
+        <CheckBox
+            android:id="@+id/trace_choose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="骑行优化"
+            android:layout_toRightOf="@+id/locationbtn"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -73,7 +81,7 @@
         android:id="@+id/show_all_dis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="总距离："
+        android:text="运动里程："
         android:textStyle="bold"
         android:visibility="visible"
         android:layout_below="@+id/title"/>
@@ -103,6 +111,23 @@
         android:textStyle="bold"
         android:visibility="visible"
         android:layout_below="@+id/hour"/>
+    <TextView
+        android:id="@+id/altitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="海拔高度："
+        android:textStyle="bold"
+        android:visibility="visible"
+        android:layout_below="@+id/cal"/>
+
+    <TextView
+        android:id="@+id/speed_hour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="每公里时速："
+        android:textStyle="bold"
+        android:visibility="visible"
+        android:layout_below="@+id/altitude"/>
 </RelativeLayout>
 
 
