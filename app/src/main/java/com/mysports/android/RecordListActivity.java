@@ -1,12 +1,15 @@
 package com.mysports.android;
 
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mysports.android.map.DbAdapter;
 import com.mysports.android.map.PathRecord;
@@ -34,6 +37,22 @@ public class RecordListActivity extends AppCompatActivity implements OnItemClick
         mAdapter = new RecordAdapter(this, mAllRecord);
         mAllRecordListView.setAdapter(mAdapter);
         mAllRecordListView.setOnItemClickListener(this);
+
+        //清空记录
+        deleteAllRecord = (Button) findViewById(R.id.delete_all_record);
+
+        deleteAllRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDataBaseHelper.deleteAll()) {
+                    Snackbar.make(v,"成功删除记录",Snackbar.LENGTH_SHORT).show();
+                    //Toast.makeText(RecordListActivity.this,"成功删除记录",Toast.LENGTH_SHORT).show();
+                    mAdapter.clear();
+                    mAdapter.notifyDataSetChanged();
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     private void searchAllRecordFromDB() {
@@ -44,6 +63,7 @@ public class RecordListActivity extends AppCompatActivity implements OnItemClick
         this.finish();
     }
 
+    private Button deleteAllRecord;
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {

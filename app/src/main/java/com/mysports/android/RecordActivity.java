@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.trace.LBSTraceClient;
@@ -182,6 +184,9 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     if (record != null) {
                         record = null;
                     }
+                    if (!mLocationClient.isStarted()) {
+                        mLocationClient.startLocation();
+                    }
                     //重启启动后对原有数据进行清空
                     mPolyoptions.getPoints().clear();
                     smoothPolytion.getPoints().clear();
@@ -198,6 +203,9 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     thread.start();
 
                 } else {
+                    if (mLocationClient.isStarted()) {
+                        mLocationClient.stopLocation();
+                    }
                     threadFlag = false; //关闭实时显示线程
                     thread.interrupt();
 
@@ -219,6 +227,19 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
         mResultShow = (TextView) findViewById(R.id.show_all_dis);
         mTraceoverlay = new TraceOverlay(mAMap);
+
+        trachChooseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v,"你已经开启骑行优化,请沿可见道路运动",Snackbar.LENGTH_LONG)
+                        .setAction("关闭骑行", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                trachChooseBtn.setChecked(false);
+                            }
+                        }).show();
+            }
+        });
     }
 
     //存储记录到本机
@@ -242,7 +263,9 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     .show();
         }
     }
-
+    public void onBackClick(View view) {
+        this.finish();
+    }
     //数据计算
     //运动时间
     private String getDuration() {
@@ -328,7 +351,10 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         mAMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
         mAMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
         // 设置定位的类型为定位模式 ，可以由定位、跟随或地图根据面向方向旋转几种
-        mAMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+        mAMap.setMyLocationStyle(myLocationStyle);
+        //mAMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
         mAMap.moveCamera(CameraUpdateFactory.zoomTo(18)); //缩放调整
     }
 
@@ -449,18 +475,37 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             }
 
             //平滑处理后轨迹
-            List<LatLng> list = mPolyoptions.getPoints();
-            mpolyline = mAMap.addPolyline(smoothPolytion.addAll(pathOptimize(list)));
+//            List<LatLng> list = mPolyoptions.getPoints();
+//            //mpolyline.remove();
+//            smoothPolytion.setPoints(pathOptimize(list));
+//
+//            if (mpolyline == null){
+//                mpolyline = mAMap.addPolyline(smoothPolytion);
+//            }else {
+//                mpolyline.setPoints(smoothPolytion.getPoints());
+//            }
+//            smoothPolytion.visible(true);
+
 
         }
+
+        if (mpolyline != null) {
+            mpolyline.remove();
+        }
+        smoothPolytion.setPoints(pathOptimize(mPolyoptions.getPoints()));
+        smoothPolytion.visible(true);
+        mpolyline = mAMap.addPolyline(smoothPolytion);
+
+        //未平滑处理
 //		if (mpolyline != null) {
 //			mpolyline.remove();
 //		}
 //		mPolyoptions.visible(true);
 //		mpolyline = mAMap.addPolyline(mPolyoptions);
-//			PolylineOptions newpoly = new PolylineOptions();
-//			mpolyline = mAMap.addPolyline(newpoly.addAll(mPolyoptions.getPoints()));
-//		}
+
+//		PolylineOptions newpoly = new PolylineOptions();
+//		mpolyline = mAMap.addPolyline(newpoly.addAll(mPolyoptions.getPoints()));
+
     }
 
     @SuppressLint("SimpleDateFormat")

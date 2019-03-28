@@ -81,6 +81,10 @@ public class DbAdapter {
         return db.delete(RECORD_TABLE, "id=" + rowId, null) > 0;
     }
 
+    public boolean deleteAll() {
+        return db.delete(RECORD_TABLE,null,null) > 0;
+    }
+
     /**
      * 数据库存入一条轨迹
      *

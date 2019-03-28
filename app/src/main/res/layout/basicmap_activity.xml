@@ -7,21 +7,31 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="48dp" 
-        android:background="@drawable/title_background" >
+        android:background="@drawable/title_background"
+        android:onClick="onBackClick">
+
+        <ImageView
+            android:id="@+id/left_of_back"
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:scaleType="center"
+            android:src="@drawable/back_btn_image"
+            />
 
         <ToggleButton
             android:id="@+id/locationbtn"
-            android:layout_width="70dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
             android:descendantFocusability="beforeDescendants"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingLeft="5dp"
             android:paddingStart="5dp" 
-            android:textOn="停止"
-            android:textOff="开始"> 
+            android:textOn="结束运动"
+            android:textOff="开始运动"
+            android:layout_toRightOf="@+id/left_of_back"
+            >
         </ToggleButton>
 
         <CheckBox

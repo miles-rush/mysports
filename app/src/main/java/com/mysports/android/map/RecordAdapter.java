@@ -14,6 +14,11 @@ public class RecordAdapter extends BaseAdapter {
     private Context mContext;
     private List<PathRecord> mRecordList;
 
+    //清空内容
+    public void clear() {
+        mRecordList.clear();
+    }
+
     public RecordAdapter(Context context, List<PathRecord> list) {
         this.mContext = context;
         this.mRecordList = list;

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -154,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
             User user = BmobUser.getCurrentUser(User.class);
             Intent intent = new Intent(MainActivity.this,IndexActivity.class);
             intent.putExtra("name",user.getUsername());
+
             Toast.makeText(MainActivity.this,"自动登陆",Toast.LENGTH_SHORT).show();
             startActivity(intent);
             finish();
