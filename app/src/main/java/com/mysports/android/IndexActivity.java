@@ -10,11 +10,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mysports.android.bomb.Community;
+
 public class IndexActivity extends AppCompatActivity {
     private Button startRun;
     private Button recordList;
     private Button tip;
     private Button exit;
+    private Button goCommunity;
 
     private TextView username;
 
@@ -28,6 +31,8 @@ public class IndexActivity extends AppCompatActivity {
 
         username = (TextView) findViewById(R.id.username);
         exit = (Button) findViewById(R.id.exit);
+
+        goCommunity = (Button) findViewById(R.id.go_community);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
@@ -59,7 +64,7 @@ public class IndexActivity extends AppCompatActivity {
         tip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(IndexActivity.this,"info:2019.3.27:22:43:Jrh",Toast.LENGTH_SHORT).show();
+                Toast.makeText(IndexActivity.this,"info:2019.3.28:21:59:Jrh",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -72,6 +77,14 @@ public class IndexActivity extends AppCompatActivity {
                 Intent intent = new Intent(IndexActivity.this,MainActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        goCommunity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(IndexActivity.this,CommunityActivity.class);
+                startActivity(intent);
             }
         });
     }

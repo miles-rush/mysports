@@ -331,17 +331,17 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         mPolyoptions = new PolylineOptions();
 //        mPolyoptions.width(20f);
 //        mPolyoptions.color(Color.GRAY);
-        mPolyoptions.width(25);
+        mPolyoptions.width(10);
         mPolyoptions.color(Color.parseColor("#FFC125")); //混淆原始路径和平滑后路径
 
         //平滑
         smoothPolytion = new PolylineOptions();
-        smoothPolytion.width(25);
+        smoothPolytion.width(10);
         smoothPolytion.color(Color.parseColor("#FFC125"));
 
         //纠偏后路径
         tracePolytion = new PolylineOptions();
-        tracePolytion.width(40);
+        tracePolytion.width(20);
         tracePolytion.setCustomTexture(BitmapDescriptorFactory.fromResource(R.drawable.grasp_trace_line));
     }
 

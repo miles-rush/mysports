@@ -29,6 +29,7 @@ import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.mysports.android.map.DbAdapter;
 import com.mysports.android.map.PathRecord;
+import com.mysports.android.map.PathSmoothTool;
 import com.mysports.android.map.TraceRePlay;
 import com.mysports.android.map.Util;
 
@@ -227,6 +228,15 @@ public class RecordShowActivity extends AppCompatActivity implements
 
     }
 
+
+    public List<LatLng> pathOptimize(List<LatLng> originlist){
+        PathSmoothTool mpathSmoothTool = new PathSmoothTool();
+        List<LatLng> pathoptimizeList = mpathSmoothTool.pathOptimize(originlist);
+//        mkalmanPolyline = mAMap.addPolyline(
+//                new PolylineOptions().addAll(pathoptimizeList).color(Color.parseColor("#FFC125")));
+        return pathoptimizeList;
+    }
+
     /**
      * 地图上添加原始轨迹线路及起终点、轨迹动画小人
      *
@@ -234,10 +244,13 @@ public class RecordShowActivity extends AppCompatActivity implements
      * @param endPoint
      * @param originList
      */
+
+
     private void addOriginTrace(LatLng startPoint, LatLng endPoint,
                                 List<LatLng> originList) {
         mOriginPolyline = mAMap.addPolyline(new PolylineOptions().color(
-                Color.BLUE).addAll(originList));
+                Color.BLUE).addAll(pathOptimize(originList))); //对原始轨迹平滑处理
+
         mOriginStartMarker = mAMap.addMarker(new MarkerOptions().position(
                 startPoint).icon(
                 BitmapDescriptorFactory.fromResource(R.drawable.start)));

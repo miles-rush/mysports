@@ -39,6 +39,12 @@
             android:text="音乐"/>
 
         <Button
+            android:id="@+id/go_community"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="社区"/>
+
+        <Button
             android:id="@+id/toast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,31 +56,7 @@
             android:layout_height="wrap_content"
             android:text="退出"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="更新内容:"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1.添加了注册登陆模块"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2.运动模块中可以保存运动记录并且回放"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3.运动轨迹优化"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="4.运动模块中选中骑行优化时会修正轨迹到马路"/>
 
     </LinearLayout>
 
