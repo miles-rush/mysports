@@ -25,6 +25,7 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.bumptech.glide.Glide;
 import com.mysports.android.bomb.User;
 import com.mysports.android.map.LocationUtil;
 

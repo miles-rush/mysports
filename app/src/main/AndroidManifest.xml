@@ -46,7 +46,8 @@
             android:authorities="com.mysports.android.BmobContentProvider" />
 
         <activity android:name=".IndexActivity" />
-        <activity android:name=".CommunityActivity"></activity>
+        <activity android:name=".CommunityActivity" />
+        <activity android:name=".DrawActivity"></activity>
     </application>
 
 </manifest>
