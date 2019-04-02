@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -126,7 +127,9 @@ public class CommunityActivity extends AppCompatActivity {
 //        PostFragment postFragment = new PostFragment();
 //        postFragment.setList(postList);
         fragments.add(new Fragment());
-        fragments.add(new PostFragment());
+        PostFragment postFragment = new PostFragment();
+        fragments.add(postFragment);
+
         fragments.add(new Fragment());
         fragments.add(new Fragment());
 

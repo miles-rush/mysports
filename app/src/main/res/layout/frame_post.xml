@@ -2,31 +2,70 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <ProgressBar
         android:id="@+id/post_wait"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"/>
-    <android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/community_swipe_refresh"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+    <!--android:id="@+id/community_swipe_refresh"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-        <LinearLayout
-            android:orientation="vertical"
+        <!--<LinearLayout-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:id="@+id/community_list"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content">-->
+            <!--</android.support.v7.widget.RecyclerView>-->
+
+        <!--</LinearLayout>-->
+
+
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+        android:id="@+id/c_swipeToLoadLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.mysports.android.layout.MyRefreshHead
+            android:id="@+id/swipe_refresh_header"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:padding="20dp"
+            android:layout_height="50dp" />
+        <!--<com.aspsine.swipetoloadlayout.SwipeRefreshHeaderLayout-->
+            <!--android:id="@+id/swipe_refresh_header"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp">-->
+        <!--</com.aspsine.swipetoloadlayout.SwipeRefreshHeaderLayout>-->
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/swipe_target"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/community_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </android.support.v7.widget.RecyclerView>
+        <com.mysports.android.layout.MyRefreshFooter
+            android:id="@+id/swipe_load_more_footer"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+        <!--<com.aspsine.swipetoloadlayout.SwipeLoadMoreFooterLayout-->
+            <!--android:id="@+id/swipe_load_more_footer"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp">-->
 
-        </LinearLayout>
+        <!--</com.aspsine.swipetoloadlayout.SwipeLoadMoreFooterLayout>-->
 
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 
 </FrameLayout>

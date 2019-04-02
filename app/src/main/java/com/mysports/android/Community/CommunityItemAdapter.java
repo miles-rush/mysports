@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +44,7 @@ public class CommunityItemAdapter extends RecyclerView.Adapter<CommunityItemAdap
         View itemView;
         TextView text;
         TextView author;
-        TextView date;
+        //TextView date;
         TextView click;
         ImageView postImage;
         CardView cardView;
@@ -55,7 +57,7 @@ public class CommunityItemAdapter extends RecyclerView.Adapter<CommunityItemAdap
             itemView = view;
             text = view.findViewById(R.id.c_item_text);
             author = view.findViewById(R.id.c_item_author);
-            date = view.findViewById(R.id.c_item_date);
+            //date = view.findViewById(R.id.c_item_date);
             click = view.findViewById(R.id.c_item_click);
             postImage = view.findViewById(R.id.post_image); //主照片
             cardView = view.findViewById(R.id.post_item_card);
@@ -93,36 +95,44 @@ public class CommunityItemAdapter extends RecyclerView.Adapter<CommunityItemAdap
         });
         return viewHolder;
     }
-    int h = 0;
-    int w = 0;
+    private double radio;
+    private LinearLayout.LayoutParams rlp;
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
         viewHolder.itemView.setTag(i);
         Post post = itemlist.get(i);
 
         viewHolder.text.setText(post.getContent().trim());
-        viewHolder.date.setText(post.getCreatedAt().trim());
+        //viewHolder.date.setText(post.getCreatedAt().trim());
         viewHolder.author.setText(post.getAuthor().getUsername());
-        viewHolder.click.setText("浏览:"+post.getPageView()+"次");
+        viewHolder.click.setText(" "+post.getPageView());
 
         viewHolder.postImage.setImageDrawable(null); //重置
 
         final List<String> imagePath = post.getPics();
-
+        rlp = (LinearLayout.LayoutParams) viewHolder.postImage.getLayoutParams();
+        radio = 0;
         if (imagePath.size() > 0) {
-
 //            Glide.with(context).load(imagePath.get(0)).asBitmap().into(new SimpleTarget<Bitmap>() {
 //                @Override
 //                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+//                    radio = (resource.getHeight()*1.0) / resource.getWidth();
+//                    rlp.width = viewHolder.postImage.getWidth();
+//                    rlp.height = (int) (viewHolder.postImage.getWidth() * radio);
+//                    Log.d("计算高宽", ""+rlp.height+" "+rlp.width);
+//                    viewHolder.postImage.setLayoutParams(rlp);
 //                    ViewGroup.LayoutParams params = viewHolder.postImage.getLayoutParams();
-//                    Glide.with(context).load(imagePath.get(0)).
-//                            override(cardWidth,200).
-//                    into(viewHolder.postImage);
-//
+//                    params.width = rlp.width;
+//                    params.height = rlp.height;
+//                    viewHolder.postImage.setLayoutParams(params);
+//                    Glide.with(context).load(imagePath.get(0)).override(rlp.width,rlp.height).into(viewHolder.postImage);
+//                    //GlideUtil.initImageWithFileCache(context,imagePath.get(0),viewHolder.postImage);
+//                    Log.d("图片高宽", ""+resource.getHeight()+" "+resource.getWidth());
+//                    Log.d("图框高宽", ""+viewHolder.postImage.getHeight()+" "+viewHolder.postImage.getWidth());
 //                }
 //            });
-
             GlideUtil.initImageWithFileCache(context,imagePath.get(0),viewHolder.postImage);
+
         }
 
 
