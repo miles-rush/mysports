@@ -47,7 +47,8 @@
 
         <activity android:name=".IndexActivity" />
         <activity android:name=".CommunityActivity" />
-        <activity android:name=".DrawActivity"></activity>
+        <activity android:name=".DrawActivity" />
+        <activity android:name=".SmallActivity.PostActivity"></activity>
     </application>
 
 </manifest>

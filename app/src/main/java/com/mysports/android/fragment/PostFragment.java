@@ -83,6 +83,9 @@ public class PostFragment extends Fragment {
                             }catch (InterruptedException e){
                                 e.printStackTrace();
                             }
+                            if (getActivity()==null){
+                                return;
+                            }
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -120,6 +123,9 @@ public class PostFragment extends Fragment {
                             }catch (InterruptedException e){
                                 e.printStackTrace();
                             }
+                            if (getActivity()==null){
+                                return;
+                            }
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -147,6 +153,10 @@ public class PostFragment extends Fragment {
                                 Thread.sleep(2000);
                             }catch (InterruptedException e){
                                 e.printStackTrace();
+                            }
+                            //处理数据尚未加载完毕时退出销毁了当前碎片
+                            if (getActivity()==null){
+                                return;
                             }
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -277,9 +287,12 @@ public class PostFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Message message = new Message();
-        message.what = FIRST_POST_DATA;
-        handler.sendMessage(message);
+        if (postList.size()==0){
+            Message message = new Message();
+            message.what = FIRST_POST_DATA;
+            handler.sendMessage(message);
+        }
+
         //linearLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
     }
 

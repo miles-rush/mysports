@@ -38,6 +38,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.mysports.android.Community.CommunityFragmentAdapter;
 import com.mysports.android.Community.CommunityItemAdapter;
+import com.mysports.android.SmallActivity.PostActivity;
 import com.mysports.android.bomb.Community;
 import com.mysports.android.bomb.Post;
 import com.mysports.android.bomb.PostImage;
@@ -413,12 +414,13 @@ public class CommunityActivity extends AppCompatActivity {
     }
 
     //图片的按钮时间
+    //返回主界面
     public void home(View view) {
         this.finish();
     }
-
+    //跳转到发布界面
     public void  writePost(View view) {
-        Intent intent = new Intent(CommunityActivity.this,MainActivity.class);
+        Intent intent = new Intent(CommunityActivity.this,PostActivity.class);
         startActivity(intent);
     }
 }
