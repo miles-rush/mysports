@@ -14,6 +14,7 @@ import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,6 +37,9 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobUser;
@@ -52,6 +56,7 @@ public class PostActivity extends AppCompatActivity {
     private TextView location;
     private TextView send; //发布
     private String imagePath; //添加照片的路径
+    final private String [] choose = {"拍照","相册","取消"};
     private void init() {
         content = findViewById(R.id.community_text); //文本编辑框
         addPhoto = findViewById(R.id.add_photo); //添加照片
@@ -65,7 +70,25 @@ public class PostActivity extends AppCompatActivity {
         addPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openAlbum();
+                AlertDialog.Builder listDialog = new AlertDialog.Builder(PostActivity.this);
+                listDialog.setItems(choose, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case 0:
+                                takePhoto();
+                                break;
+                            case 1:
+                                openAlbum();
+                                break;
+                            case 2:
+                                return;
+                                default:
+                                    break;
+                        }
+                    }
+                });
+                listDialog.show();
             }
         });
         //照片删除事件
@@ -188,25 +211,73 @@ public class PostActivity extends AppCompatActivity {
 
     public static final int TAKE_PHTOT = 1;
     public static final int CHOOSE_PHTOT = 2;
+    private Uri imageUri;
+    private String takePhotoPath;
     //相册照片处理
     private void openAlbum(){
         Intent intent = new Intent("android.intent.action.GET_CONTENT");
         intent.setType("image/*");
         startActivityForResult(intent,CHOOSE_PHTOT);
     }
+    //使用当前时间作为拍摄照片的文件名
+    private String getTimeString() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+
+        String year = String.valueOf(cal.get(Calendar.YEAR));
+        String month = String.valueOf(cal.get(Calendar.MONTH))+1;
+        String day = String.valueOf(cal.get(Calendar.DATE));
+        String hour = "";
+        if (cal.get(Calendar.AM_PM) == 0)
+            hour = String.valueOf(cal.get(Calendar.HOUR));
+        else
+            hour = String.valueOf(cal.get(Calendar.HOUR)+12);
+        String minute = String.valueOf(cal.get(Calendar.MINUTE));
+        String second = String.valueOf(cal.get(Calendar.SECOND));
+        return year+month+day+hour+minute+second;
+    }
+    //拍照
+    private void takePhoto() {
+        File outputImage = new File(getExternalCacheDir(),getTimeString());
+        takePhotoPath = outputImage.getPath();
+        try{
+            if(outputImage.exists()){
+                outputImage.delete();
+            }
+            outputImage.createNewFile();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT >= 24){
+            imageUri = FileProvider.getUriForFile(PostActivity.this,
+                    "com.example.cameraalbumtest.fileprovider",outputImage);
+        }else {
+            imageUri = Uri.fromFile(outputImage);
+        }
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+        startActivityForResult(intent,TAKE_PHTOT);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         switch (requestCode){
             case TAKE_PHTOT:
-//                if (resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK){
+                    Log.d("url", "onActivityResult: "+imageUri);
+                    if (takePhotoPath != null){
+                        Glide.with(PostActivity.this).load(takePhotoPath).override(235,235).into(postImage);
+                        addPhoto.setVisibility(View.GONE);
+                        postImage.setVisibility(View.VISIBLE);
+                        imagePath = takePhotoPath; //确认照片拍摄成功后
+                    }
 //                    try{
 //                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-//                        picture.setImageBitmap(bitmap);
+//                        postImage.setImageBitmap(bitmap);
 //                    }catch (FileNotFoundException e){
 //                        e.printStackTrace();
 //                    }
-//                }
+                }
                 break;
             case CHOOSE_PHTOT:
                 if (resultCode == RESULT_OK){
