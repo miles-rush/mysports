@@ -9,7 +9,6 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
         android:layout_centerVertical="true"
-        android:onClick="home"
         android:src="@mipmap/home"/>
     <TextView
         android:layout_width="wrap_content"

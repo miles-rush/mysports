@@ -93,52 +93,17 @@ public class CommunityActivity extends AppCompatActivity {
     private CommunityFragmentAdapter pagerAdapter;
 
     private void init(){
-//        text = findViewById(R.id.community_text);
-//        release = findViewById(R.id.community_btn);
-//        addImage = findViewById(R.id.add_image);
-//
-//        itemRecyclerView = findViewById(R.id.community_list);
-//        itemRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
-//
-//        progressBar = findViewById(R.id.progress_bar);
-//
-          postList = new ArrayList<Post>();
-//        swipeRefreshLayout = findViewById(R.id.community_swipe_refresh);
-//        swipeRefreshLayout.setColorSchemeResources(R.color.colorBlack);
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                refreshList();
-//            }
-//        });
-//
-//        ImageView image1 = findViewById(R.id.post_image_1);
-//        ImageView image2 = findViewById(R.id.post_image_2);
-//        ImageView image3 = findViewById(R.id.post_image_3);
-//        imageList = new ArrayList<ImageView>();
-//        imageList.add(image1);
-//        imageList.add(image2);
-//        imageList.add(image3);
-//
-//        imagePaths = new ArrayList<String>();
-
+        postList = new ArrayList<Post>();
         tabLayout = (TabLayout) findViewById(R.id.tab);
         viewPager = (ViewPager) findViewById(R.id.viewpage);
-//        getDynamic();
-//        PostFragment postFragment = new PostFragment();
-//        postFragment.setList(postList);
         fragments.add(new Fragment());
         PostFragment postFragment = new PostFragment();
         fragments.add(postFragment);
-
         fragments.add(new Fragment());
         fragments.add(new Fragment());
-
         pagerAdapter = new CommunityFragmentAdapter(fragments,titles,getSupportFragmentManager());
-
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     private void refreshList() {
@@ -162,6 +127,7 @@ public class CommunityActivity extends AppCompatActivity {
             }
         }).start();
     }
+
     private void getDynamic() {
         BmobQuery<Post> bmobQuery = new BmobQuery<Post>();
         bmobQuery.include("author");
@@ -174,9 +140,7 @@ public class CommunityActivity extends AppCompatActivity {
                     if (postList.size() > 0) {
                         postList.clear();
                     }
-
                     for (final Post post : list) {
-
                         Post p = new Post();
                         p.setObjectId(post.getObjectId());
                         BmobQuery<PostImage> imageQuery = new BmobQuery<PostImage>();
@@ -220,207 +184,8 @@ public class CommunityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_community);
-
         init();
-//
-//        setList();
-//        release.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(final View v) {
-//                if (text.getText().toString().length() > 0) {
-//                    Post post = new Post();
-//                    post.setContent(text.getText().toString());
-//                    post.setPageView(0);
-//                    post.setAuthor(BmobUser.getCurrentUser(User.class));
-//
-//                    post.save(new SaveListener<String>() {
-//                        @Override
-//                        public void done(final String s, BmobException e) {
-//                            if (e == null) {
-//                                for (String path:imagePaths) {
-//                                    final BmobFile pic = new BmobFile(new File(path));
-//                                    Log.d("path", "done: "+path);
-//                                    pic.uploadblock(new UploadFileListener() {
-//                                        @Override
-//                                        public void done(BmobException e) {
-//                                            if (e == null) {
-//                                                Post p = new Post();
-//                                                p.setObjectId(s);
-//                                                PostImage postImage = new PostImage();
-//                                                postImage.setPic(pic);
-//                                                postImage.setPost(p);
-//                                                postImage.save(new SaveListener<String>() {
-//                                                    @Override
-//                                                    public void done(String s, BmobException e) {
-//                                                        if (e != null){
-//                                                            Toast.makeText(CommunityActivity.this,"图片关联失败"+e.getMessage(),Toast.LENGTH_LONG).show();
-//                                                        }
-//                                                    }
-//                                                });
-//                                            }else {
-//                                                Toast.makeText(CommunityActivity.this,"图片上传失败",Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        }
-//                                    });
-//
-//                                }
-//                                Snackbar.make(v,"动态已发布",Snackbar.LENGTH_LONG).show();
-//                                for (ImageView imageView:imageList) {
-//                                    imageView.setImageDrawable(null);
-//                                }
-//                                refreshList();
-//                            }else {
-//                                Snackbar.make(v,"发布失败"+e.getMessage(),Snackbar.LENGTH_LONG).show();
-//                            }
-//                        }
-//                    });
-//
-//                    swipeRefreshLayout.setRefreshing(true);
-//                    getDynamic();
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            postItemAdapter.notifyDataSetChanged();
-//                        }
-//                    });
-//                    swipeRefreshLayout.setRefreshing(false);
-//                }else {
-//                    Snackbar.make(v,"尚未添加内容",Snackbar.LENGTH_LONG).show();
-//                }
-//
-//            }
-//        });
-//
-//        addImage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Boolean can = false;
-//                for (ImageView view:imageList) {
-//                    if (view.getDrawable()==null){
-//                        can = true;
-//                    }
-//                }
-//                if (can) {
-//                    openAlbum();
-//                }else {
-//                    Toast.makeText(CommunityActivity.this,"最多选择三张图片",Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
     }
 
 
-    public static final int CHOOSE_PHTOT = 2;
-
-    private Uri imageUri;
-
-    private List<ImageView> imageList;
-
-    private void openAlbum(){
-        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-        intent.setType("image/*");
-        startActivityForResult(intent,CHOOSE_PHTOT);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode){
-//            case TAKE_PHTOT:
-//                if (resultCode == RESULT_OK){
-//                    try{
-//                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-//                        picture.setImageBitmap(bitmap);
-//                    }catch (FileNotFoundException e){
-//                        e.printStackTrace();
-//                    }
-//                }
-//                break;
-            case CHOOSE_PHTOT:
-                if (resultCode == RESULT_OK){
-                    if (Build.VERSION.SDK_INT >= 19){
-                        handleImageOnKitKat(data);
-
-                    }else {
-                        handleImageBeforeKitKat(data);
-                    }
-                    break;
-                }
-            default:
-                break;
-        }
-    }
-
-    @TargetApi(19)
-    private void handleImageOnKitKat(Intent data) {
-        String imagePath = null;
-        Uri uri = data.getData();
-        Log.d("TAG", "handleImageOnKitKat: uri is " + uri);
-        if (DocumentsContract.isDocumentUri(this, uri)) {
-            // 如果是document类型的Uri，则通过document id处理
-            String docId = DocumentsContract.getDocumentId(uri);
-            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String id = docId.split(":")[1]; // 解析出数字格式的id
-                String selection = MediaStore.Images.Media._ID + "=" + id;
-                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
-            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
-                imagePath = getImagePath(contentUri, null);
-            }
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            // 如果是content类型的Uri，则使用普通方式处理
-            imagePath = getImagePath(uri, null);
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            // 如果是file类型的Uri，直接获取图片路径即可
-            imagePath = uri.getPath();
-        }
-        displayImage(imagePath); // 根据图片路径显示图片
-    }
-
-    private void handleImageBeforeKitKat(Intent data) {
-        Uri uri = data.getData();
-        String imagePath = getImagePath(uri, null);
-        displayImage(imagePath);
-    }
-
-    private String getImagePath(Uri uri, String selection) {
-        String path = null;
-        Cursor cursor = getContentResolver().query(uri,null,selection,null,null);
-        if (cursor != null){
-            if (cursor.moveToFirst()){
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-            }
-            cursor.close();
-        }
-        return path;
-    }
-
-    private void displayImage(String imagePath) {
-        if (imagePath != null) {
-
-            for (ImageView imageView:imageList) {
-                if (imageView.getDrawable() == null){
-                    imagePaths.add(imagePath);
-                    Glide.with(this).load(imagePath).override(240,240).into(imageView);
-                    break;
-                }
-            }
-            //Glide.with(this).load(imagePath).override(240,240).into(image1);
-            //Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-
-            //image1.setImageBitmap(bitmap);
-        } else {
-            Toast.makeText(this, "failed to get image", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    //图片的按钮时间
-    //返回主界面
-    public void home(View view) {
-        this.finish();
-    }
-    //跳转到发布界面
-    public void  writePost(View view) {
-        Intent intent = new Intent(CommunityActivity.this,PostActivity.class);
-        startActivity(intent);
-    }
 }

@@ -5,59 +5,68 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".IndexActivity">
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Button
-            android:id="@+id/start_run"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="开始运动"/>
 
-        <Button
-            android:id="@+id/record_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="运动日志"/>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/main_viewpage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <Button
-            android:id="@+id/take_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="拍照"/>
+        </android.support.v4.view.ViewPager>
 
-        <Button
-            android:id="@+id/music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="音乐"/>
+        <android.support.design.widget.TabLayout
+            android:id="@+id/main_tab"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/MyTablayoutstyle"
+            >
 
-        <Button
-            android:id="@+id/go_community"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="社区"/>
-
-        <Button
-            android:id="@+id/toast"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="版本信息"/>
-
-        <Button
-            android:id="@+id/exit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="退出"/>
-
-
-
+        </android.support.design.widget.TabLayout>
     </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+        <!--<TextView-->
+            <!--android:id="@+id/username"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+        <!--<Button-->
+            <!--android:id="@+id/start_run"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="开始运动"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/record_list"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="运动日志"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/go_community"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="社区"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/toast"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="版本信息"/>-->
+
+        <!--<Button-->
+            <!--android:id="@+id/exit"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="退出"/>-->
+
+
+
+    <!--</LinearLayout>-->
 
 </android.support.constraint.ConstraintLayout>
