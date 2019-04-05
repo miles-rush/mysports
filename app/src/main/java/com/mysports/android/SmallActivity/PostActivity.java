@@ -74,11 +74,14 @@ public class PostActivity extends AppCompatActivity implements AMapLocationListe
         refresh = findViewById(R.id.image_refresh); //刷新定位
         imagePath = new String();
         imagePath = null;
+        locationText = null;
+        isLocation = false;
+        locationText = "定位中...";
+        location.setText(locationText);
         //开启定位
         getLoaction();
         //定位信息
-        locationText = "定位中...";
-        location.setText(locationText);
+
 
         //添加照片事件
         addPhoto.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +194,8 @@ public class PostActivity extends AppCompatActivity implements AMapLocationListe
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getLoaction();
+
+               Toast.makeText(PostActivity.this,"刷新成功",Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -393,7 +397,8 @@ public class PostActivity extends AppCompatActivity implements AMapLocationListe
         // 同时使用网络定位和GPS定位,优先返回最高精度的定位结果,以及对应的地址描述信息
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。默认连续定位 切最低时间间隔为1000ms
-        mLocationOption.setInterval(3500);
+        //mLocationOption.setInterval(5000);
+        mLocationOption.setOnceLocation(true);
         //设置是否返回地址信息（默认返回地址信息）
         mLocationOption.setNeedAddress(true);
         //关闭缓存机制 默认开启 ，在高精度模式和低功耗模式下进行的网络定位结果均会生成本地缓存,不区分单次定位还是连续定位。GPS定位结果不会被缓存。
@@ -411,6 +416,13 @@ public class PostActivity extends AppCompatActivity implements AMapLocationListe
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        //mLocationClient.stopLocation();
+    }
+
+    private boolean isLocation;
+    @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation!=null){
             if (aMapLocation.getErrorCode() ==0) {
@@ -419,12 +431,14 @@ public class PostActivity extends AppCompatActivity implements AMapLocationListe
                 String district = aMapLocation.getDistrict(); //城区信息
                 String street = aMapLocation.getStreet(); //街道信息
                 locationText = city + district + street;
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         location.setText(locationText);
                     }
                 });
+
 
             }else {
                 Log.e("AmapError", "location Error, ErrCode:"

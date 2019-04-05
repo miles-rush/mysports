@@ -68,6 +68,10 @@ public class IndexActivity extends AppCompatActivity {
 
         mainViewPager.setAdapter(pagerAdapter);
         mainTabLayout.setupWithViewPager(mainViewPager);
+        mainTabLayout.getTabAt(0).setIcon(R.mipmap.runer);
+        mainTabLayout.getTabAt(1).setIcon(R.mipmap.seemore);
+        mainTabLayout.getTabAt(2).setIcon(R.mipmap.communit);
+        mainTabLayout.getTabAt(3).setIcon(R.mipmap.myconfig);
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

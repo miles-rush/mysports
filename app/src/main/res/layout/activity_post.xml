@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:layout_centerVertical="true"
-                android:text="杭州市"
+                android:text="定位中..."
                 android:layout_marginRight="8dp"
                 android:layout_toLeftOf="@+id/image_refresh"
 
