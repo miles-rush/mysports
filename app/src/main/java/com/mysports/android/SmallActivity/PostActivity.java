@@ -53,7 +53,9 @@ import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadFileListener;
-
+/*
+* 发布动态
+* */
 public class PostActivity extends AppCompatActivity implements AMapLocationListener{
     private EditText content;
     //private ImageButton addPhoto;

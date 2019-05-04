@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,10 +21,12 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
@@ -45,7 +48,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+/*
+* 运动界面
+* */
 public class RecordActivity extends AppCompatActivity implements LocationSource,AMapLocationListener,TraceListener {
 
     private final static int CALLTRACE = 0;
@@ -93,16 +98,23 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
     private CheckBox trachChooseBtn;
 
+    private FloatingActionButton start;
+
+    private FloatingActionButton stop;
+
+    private FloatingActionButton pause;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.basicmap_activity);
         mMapView = (MapView) findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);// 此方法必须重写
+        UiSettings uiSettings = mMapView.getMap().getUiSettings();
+        uiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
         init();
         initpolyline();
-
-
     }
 
 
@@ -115,18 +127,23 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                 case UPDATE_TEXT:
                     mEndTime = System.currentTimeMillis();
                     //mOverlayList.add(mTraceoverlay);
-                    DecimalFormat decimalFormat = new DecimalFormat("0.0");
+                    DecimalFormat decimalFormat = new DecimalFormat("0.0"); //速度格式
+                    DecimalFormat distanceFormat = new DecimalFormat("0.00"); //距离格式
                     //LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
                     //mTraceClient.queryProcessedTrace(2, Util.parseTraceLocationList(record.getPathline()) , LBSTraceClient.TYPE_AMAP, RecordActivity.this);
                     float distance = getDistance(record.getPathline());
-                    //刷新数据
-                    mResultShow.setText("运动里程:"+ decimalFormat.format(distance) + "M");
 
-                    hour.setText("时间:"+((mEndTime-mStartTime)/1000)+"S");
+                    //刷新数据
+                    mResultShow.setText(""+ distanceFormat.format(distance/1000)); //距离的显示 公里
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    long timeMs = mEndTime-mStartTime-pauseTime*1000; //时间转化为毫秒
+
+                    hour.setText(sdf.format(timeMs-8*60*60*1000)); //真机运行时有八小时的误差
                     float speedn = distance/((mEndTime-mStartTime)/1000);
-                    speed.setText("速度:"+decimalFormat.format(speedn)+"M/s");
-                    cal.setText("卡路里消耗:"+decimalFormat.format(kcal(80,distance))+"kcal");
-                    altitude.setText("海拔:"+altitude_num);
+                    speed.setText(""+decimalFormat.format(speedn));
+                    cal.setText(""+decimalFormat.format(kcal(70,distance)));
+                    altitude.setText(""+altitude_num);
+
                     break;
                     default:
                         break;
@@ -139,6 +156,8 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         return weight*1.036*distance/1000; //kcal
     }
 
+    private boolean threadRuning = true; //暂停控制
+    private int pauseTime = 0;
     //实时显示线程
     private class showThread extends Thread{
         @Override
@@ -146,10 +165,17 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             super.run();
             while (threadFlag) {
                 try {
+
                     Thread.sleep(1000);
-                    Message msg = new Message();
-                    msg.what = UPDATE_TEXT;
-                    handler.sendMessage(msg);
+                    if (threadRuning) {
+                        Message msg = new Message();
+                        msg.what = UPDATE_TEXT;
+                        handler.sendMessage(msg);
+                    }else{
+                        pauseTime++;
+                    }
+
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -168,12 +194,18 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         hour = (TextView) findViewById(R.id.hour);
         cal = (TextView) findViewById(R.id.cal);
         altitude = (TextView) findViewById(R.id.altitude);
-        speed_hour = (TextView) findViewById(R.id.speed_hour);
+        start = (FloatingActionButton) findViewById(R.id.floating_start);
+        stop = (FloatingActionButton) findViewById(R.id.floating_stop);
+        pause = (FloatingActionButton) findViewById(R.id.floating_pause);
+        //speed_hour = (TextView) findViewById(R.id.speed_hour);
 
         if (mAMap == null) {
             mAMap = mMapView.getMap();
             setUpMap();
         }
+        //使用悬浮按钮替代原来使用的按钮
+
+
 
         btn = (ToggleButton) findViewById(R.id.locationbtn);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -190,12 +222,13 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     //重启启动后对原有数据进行清空
                     mPolyoptions.getPoints().clear();
                     smoothPolytion.getPoints().clear();
+                    pauseTime = 0;
 
                     //初始记录数据设置
                     record = new PathRecord();
                     mStartTime = System.currentTimeMillis();
                     record.setDate(getcueDate(mStartTime));
-                    mResultShow.setText("运动里程:");
+                    mResultShow.setText("");
 
                     //启动线程
                     thread = new showThread();
@@ -211,9 +244,11 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
                     mEndTime = System.currentTimeMillis();
                     mOverlayList.add(mTraceoverlay);
-                    DecimalFormat decimalFormat = new DecimalFormat("0.0");
-                    mResultShow.setText("运动里程"+ decimalFormat.format(getTotalDistance()) + "M");
+                    //结束时距离的显示
+                    //DecimalFormat decimalFormat = new DecimalFormat("0.0");
+                    //mResultShow.setText(""+ decimalFormat.format(getTotalDistance()));
 
+                    //骑行选中时
                     if (trachChooseBtn.isChecked()) {
                         LBSTraceClient mTraceClient = new LBSTraceClient(getApplicationContext());
                         //lineID=2
@@ -224,6 +259,57 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                 }
             }
         });
+
+        //分开写逻辑函数时出现问题 这里从按钮时间中去调用另一个按钮
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(RecordActivity.this,"开始运动",Toast.LENGTH_SHORT).show();
+                btn.performClick();
+                //隐藏开始按钮 显示结束按钮
+                start.hide();
+                stop.show();
+                pause.show();
+
+            }
+        });
+
+        stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(RecordActivity.this,"结束运动",Toast.LENGTH_SHORT).show();
+                btn.performClick();
+                stop.hide();
+                start.show();
+                pause.hide();
+                Snackbar.make(v,"运动记录已经保存",Snackbar.LENGTH_LONG)
+                        .setAction("查看", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //这里应该转到数据分析界面 暂时转到运动纪录界面
+                                Intent intent = new Intent(RecordActivity.this,RecordListActivity.class);
+                                startActivity(intent);
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        //暂停逻辑待修改
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (threadRuning) {
+                    threadRuning = false;
+                    //轨迹记录没有停止
+                    Toast.makeText(RecordActivity.this,"暂停运动",Toast.LENGTH_SHORT).show();
+                }else {
+                    threadRuning = true;
+                    Toast.makeText(RecordActivity.this,"恢复运动",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
         mResultShow = (TextView) findViewById(R.id.show_all_dis);
         mTraceoverlay = new TraceOverlay(mAMap);

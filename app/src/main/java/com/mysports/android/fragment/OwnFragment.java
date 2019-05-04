@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mysports.android.MainActivity;
 import com.mysports.android.R;
 
@@ -28,12 +29,14 @@ public class OwnFragment extends Fragment {
     }
 
     private Button exit;
+    private Button glide;
     private TextView name;
     private SharedPreferences preferences;
 
     private SharedPreferences.Editor editor;
     private void init(View view) {
         exit = view.findViewById(R.id.exit);
+        glide = view.findViewById(R.id.glide);
         name = view.findViewById(R.id.user_name);
         name.setText("欢迎:"+getActivity().getIntent().getStringExtra("name"));
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -46,6 +49,14 @@ public class OwnFragment extends Fragment {
                 Intent intent = new Intent(getActivity(),MainActivity.class);
                 startActivity(intent);
                 getActivity().finish();
+            }
+        });
+
+        glide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
             }
         });
     }

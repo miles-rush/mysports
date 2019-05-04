@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="48dp" 
         android:background="@drawable/title_background"
-        android:onClick="onBackClick">
+        android:onClick="onBackClick"
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/left_of_back"
@@ -77,6 +78,7 @@
                 android:enabled="true"
                 android:textSize="18dp"
                 android:text="运动记录" />
+
         </LinearLayout>
     </RelativeLayout>
 
@@ -87,57 +89,254 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/title" >
     </com.amap.api.maps.MapView>
-    <TextView
-        android:id="@+id/show_all_dis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="运动里程："
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:layout_below="@+id/title"/>
 
-    <TextView
-        android:id="@+id/speed"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="速度："
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:layout_below="@+id/show_all_dis"/>
+        android:layout_margin="15dp"
+        android:background="#8000"
+        android:layout_below="@+id/title"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            android:textColor="#CFCFCF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="----本次运动数据----"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:text="海拔高度"/>
+            <TextView
+                android:id="@+id/altitude"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:visibility="visible"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:textColor="#C0FF3E"
+                android:textSize="20sp"
+                android:layout_weight="1"/>
 
-    <TextView
-        android:id="@+id/hour"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="时间："
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:layout_below="@+id/speed"/>
-    <TextView
-        android:id="@+id/cal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="卡路里消耗："
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:layout_below="@+id/hour"/>
-    <TextView
-        android:id="@+id/altitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="海拔高度："
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:layout_below="@+id/cal"/>
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
+                android:text="米"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:layout_weight="1"/>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/speed_hour"
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:text="运动里程"/>
+            <TextView
+                android:id="@+id/show_all_dis"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:textColor="#C0FF3E"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
+                android:text="公里"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:text="平均速度"/>
+            <TextView
+                android:id="@+id/speed"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:textColor="#C0FF3E"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
+                android:text="米/秒"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:text="运动耗时"/>
+            <TextView
+                android:id="@+id/hour"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:textColor="#C0FF3E"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:text="消耗热量"/>
+            <TextView
+                android:id="@+id/cal"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:textColor="#C0FF3E"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="15dp"
+                android:text="千卡"
+                android:textSize="14sp"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floating_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="每公里时速："
-        android:textStyle="bold"
-        android:visibility="visible"
-        android:layout_below="@+id/altitude"/>
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:layout_above="@+id/run_return"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/start_run"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floating_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:layout_above="@+id/run_return"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/stop_run"
+        android:visibility="gone"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floating_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@mipmap/pause"
+        android:layout_marginRight="16dp"
+        android:layout_above="@id/floating_stop"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/run_return"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="54dp"
+        android:clickable="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/retrun"
+        android:onClick="onBackClick"
+        />
+
 </RelativeLayout>
 
 
