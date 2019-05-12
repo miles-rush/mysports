@@ -1,9 +1,11 @@
 package com.mysports.android.map;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mysports.android.R;
@@ -47,7 +49,7 @@ public class RecordAdapter extends BaseAdapter {
             convertView = View.inflate(mContext, R.layout.recorditem, null);
             holder.date = (TextView) convertView.findViewById(R.id.date);
             holder.record = (TextView) convertView.findViewById(R.id.record);
-
+            holder.delete = (ImageView) convertView.findViewById(R.id.item_delete); //删除单项
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -56,11 +58,22 @@ public class RecordAdapter extends BaseAdapter {
         PathRecord item = mRecordList.get(position);
         holder.date.setText(item.getDate());
         holder.record.setText(item.toString());
+
+        //删除
+        holder.delete.setTag(position);
+        holder.delete.setOnClickListener(onDeleteItem);
         return convertView;
+    }
+
+    private View.OnClickListener onDeleteItem; //删除的接口
+
+    public void setOnDeleteItem(View.OnClickListener onDeleteItem) {
+        this.onDeleteItem = onDeleteItem;
     }
 
     private class ViewHolder {
         TextView date;
         TextView record;
+        ImageView delete;
     }
 }

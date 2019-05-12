@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SmallActivity.OneDataActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark">
+
+        <ImageView
+            android:id="@+id/one_data_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/exercise_drawerlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical">
+
+                <!--标题栏-->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="#fff"
+                        android:textSize="20sp"
+                        android:text="运动数据"/>
+                    <TextView
+                        android:id="@+id/exercise_end_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:textColor="#fff"
+                        android:textSize="16sp"/>
+                </RelativeLayout>
+
+                <include layout="@layout/one_data_two" />
+                <include layout="@layout/one_data_three" />
+                <include layout="@layout/one_data_four" />
+            </LinearLayout>
+
+        </android.support.v4.widget.DrawerLayout>
+    </FrameLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>

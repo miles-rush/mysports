@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.mysports.android.MainActivity;
 import com.mysports.android.R;
+import com.mysports.android.SmallActivity.OneDataActivity;
 
 import cn.bmob.v3.datatype.BmobFile;
 
@@ -55,7 +56,8 @@ public class OwnFragment extends Fragment {
         glide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(getActivity(),OneDataActivity.class);
+                startActivity(intent);
 
             }
         });

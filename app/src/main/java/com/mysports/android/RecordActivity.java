@@ -1,6 +1,7 @@
 package com.mysports.android;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -38,6 +39,7 @@ import com.amap.api.trace.LBSTraceClient;
 import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.amap.api.trace.TraceOverlay;
+import com.mysports.android.SmallActivity.OneDataActivity;
 import com.mysports.android.map.DbAdapter;
 import com.mysports.android.map.PathRecord;
 import com.mysports.android.map.PathSmoothTool;
@@ -282,16 +284,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                 stop.hide();
                 start.show();
                 pause.hide();
-                Snackbar.make(v,"运动记录已经保存",Snackbar.LENGTH_LONG)
-                        .setAction("查看", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //这里应该转到数据分析界面 暂时转到运动纪录界面
-                                Intent intent = new Intent(RecordActivity.this,RecordListActivity.class);
-                                startActivity(intent);
-                            }
-                        })
-                        .show();
+
             }
         });
 
@@ -328,6 +321,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         });
     }
 
+    private long recordID;
     //存储记录到本机
     protected void saveRecord(List<AMapLocation> list, String time) {
         if (list != null && list.size() > 0) {
@@ -341,9 +335,23 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             AMapLocation lastLocaiton = list.get(list.size() - 1);
             String stratpoint = amapLocationToString(firstLocaiton);
             String endpoint = amapLocationToString(lastLocaiton);
-            DbHepler.createrecord(String.valueOf(distance), duration, average,
+            recordID = DbHepler.createrecord(String.valueOf(distance), duration, average,
                     pathlineSring, stratpoint, endpoint, time);
             DbHepler.close();
+
+            Snackbar.make(getWindow().getDecorView().findViewById(R.id.floating_stop),"运动记录已经保存",Snackbar.LENGTH_LONG)
+                    .setAction("查看", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //这里应该转到数据分析界面 暂时转到运动纪录界面
+                            Intent intent = new Intent(RecordActivity.this,OneDataActivity.class);
+                            intent.putExtra("RECORD_ID",recordID);
+                            startActivity(intent);
+                        }
+                    })
+                    .show();
+
+
         } else {
             Toast.makeText(RecordActivity.this, "没有记录到路径", Toast.LENGTH_SHORT)
                     .show();

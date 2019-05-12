@@ -255,6 +255,7 @@ public class ExecriseFragment extends Fragment {
 
     private void loadBingPic() {
         String requestBingPic = "http://guolin.tech/api/bing_pic";
+        //String requestBingPic = "https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture";
         HttpUtil.sendOkHttpRequest(requestBingPic, new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
