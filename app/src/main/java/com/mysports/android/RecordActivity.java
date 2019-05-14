@@ -347,6 +347,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                             Intent intent = new Intent(RecordActivity.this,OneDataActivity.class);
                             intent.putExtra("RECORD_ID",recordID);
                             startActivity(intent);
+                            finish();
                         }
                     })
                     .show();
@@ -391,7 +392,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         return distance;
     }
 
-    //路径信息
+    //路径信息 将坐标集转化成字符串
     private String getPathLineString(List<AMapLocation> list) {
         if (list == null || list.size() == 0) {
             return "";
@@ -408,6 +409,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         return pathLineString;
     }
 
+    //将单个坐标点转化为字符串
     private String amapLocationToString(AMapLocation location) {
         StringBuffer locString = new StringBuffer();
         locString.append(location.getLatitude()).append(",");

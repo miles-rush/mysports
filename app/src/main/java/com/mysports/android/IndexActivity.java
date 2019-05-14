@@ -24,6 +24,7 @@ import com.mysports.android.fragment.PostFragment;
 
 import java.util.ArrayList;
 
+//登陆后进入的界面
 public class IndexActivity extends AppCompatActivity {
     private Button startRun;
     private Button recordList;
@@ -58,7 +59,7 @@ public class IndexActivity extends AppCompatActivity {
     private void initTab() {
         mainTabLayout = (TabLayout) findViewById(R.id.main_tab);
         mainViewPager = (ViewPager) findViewById(R.id.main_viewpage);
-
+        mainViewPager.setOffscreenPageLimit(2);
         fragments.add(new ExecriseFragment());
         fragments.add(new Fragment());
         fragments.add(new CommunityFragment());

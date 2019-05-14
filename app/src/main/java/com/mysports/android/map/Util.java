@@ -62,6 +62,7 @@ public class Util {
         return traceList;
     }
 
+    //字符串转化为单个坐标点
     public static AMapLocation parseLocation(String latLonStr) {
         if (latLonStr == null || latLonStr.equals("") || latLonStr.equals("[]")) {
             return null;
@@ -85,6 +86,7 @@ public class Util {
         return location;
     }
 
+    //字符串转化为坐标集
     public static ArrayList<AMapLocation> parseLocations(String latLonStr) {
         ArrayList<AMapLocation> locations = new ArrayList<AMapLocation>();
         String[] latLonStrs = latLonStr.split(";");
@@ -95,5 +97,35 @@ public class Util {
             }
         }
         return locations;
+    }
+
+
+    //将坐标集转化成字符串
+    public static String getPathLineString(List<AMapLocation> list) {
+        if (list == null || list.size() == 0) {
+            return "";
+        }
+        StringBuffer pathline = new StringBuffer();
+        for (int i = 0; i < list.size(); i++) {
+            AMapLocation location = list.get(i);
+            String locString = amapLocationToString(location);
+            pathline.append(locString).append(";");
+        }
+        String pathLineString = pathline.toString();
+        pathLineString = pathLineString.substring(0,
+                pathLineString.length() - 1);
+        return pathLineString;
+    }
+
+    //将单个坐标点转化为字符串
+    public static String amapLocationToString(AMapLocation location) {
+        StringBuffer locString = new StringBuffer();
+        locString.append(location.getLatitude()).append(",");
+        locString.append(location.getLongitude()).append(",");
+        locString.append(location.getProvider()).append(",");
+        locString.append(location.getTime()).append(",");
+        locString.append(location.getSpeed()).append(",");
+        locString.append(location.getBearing());
+        return locString.toString();
     }
 }

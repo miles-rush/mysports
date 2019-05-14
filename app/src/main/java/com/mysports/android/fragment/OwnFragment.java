@@ -21,12 +21,23 @@ import com.mysports.android.SmallActivity.OneDataActivity;
 import cn.bmob.v3.datatype.BmobFile;
 
 public class OwnFragment extends Fragment {
+    private View view;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.own_fragment,container,false);
-        init(view);
+        if (null == view) {
+            view = inflater.inflate(R.layout.own_fragment,container,false);
+            init(view);
+        }
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (null != view) {
+            ((ViewGroup) view.getParent()).removeView(view);
+        }
     }
 
     private Button exit;

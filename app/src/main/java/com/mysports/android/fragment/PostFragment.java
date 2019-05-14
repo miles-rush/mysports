@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
+import com.bumptech.glide.Glide;
 import com.mysports.android.Community.CommunityFragmentAdapter;
 import com.mysports.android.Community.CommunityItemAdapter;
 import com.mysports.android.CommunityActivity;
@@ -33,6 +34,7 @@ import com.mysports.android.bomb.Post;
 import com.mysports.android.bomb.PostImage;
 import com.mysports.android.layout.MyRefreshFooter;
 import com.mysports.android.layout.MyRefreshHead;
+import com.mysports.android.media.GlideUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +63,7 @@ public class PostFragment extends Fragment {
     private int newSize;
     private int skip; //用于加载更多数据时的跳跃
     private boolean loadData;
+    private View view;
     public void setList(List<Post> list) {
         postList = list;
     }
@@ -179,77 +182,78 @@ public class PostFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.frame_post,container,false);
-        //数据数组初始化
-        postList = new ArrayList<Post>();
-        loadData = true;
-        oldSize = 0;
-        newSize = 0;
-        skip = 0;
-        //初始化列表控件
-        //recyclerView = view.findViewById(R.id.community_list);
-        recyclerView = view.findViewById(R.id.swipe_target);
-        //初始化适配器
-        adapter = new CommunityItemAdapter(postList);
-        //为控件设置适配器
-        recyclerView.setAdapter(adapter);
+        if (null == view) {
+            view = inflater.inflate(R.layout.frame_post,container,false);
+            //数据数组初始化
+            postList = new ArrayList<Post>();
+            loadData = true;
+            oldSize = 0;
+            newSize = 0;
+            skip = 0;
+            //初始化列表控件
+            //recyclerView = view.findViewById(R.id.community_list);
+            recyclerView = view.findViewById(R.id.swipe_target);
+            //初始化适配器
+            adapter = new CommunityItemAdapter(postList);
+            //为控件设置适配器
+            recyclerView.setAdapter(adapter);
 
-        linearLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
-        linearLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
-        //设置控件格式
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
-        adapter.notifyDataSetChanged();
+            linearLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+            linearLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_MOVE_ITEMS_BETWEEN_SPANS);
+            //设置控件格式
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
+            adapter.notifyDataSetChanged();
 
-        swipeToLoadLayout = view.findViewById(R.id.c_swipeToLoadLayout);
-        //刷新头部设置
-        //MyRefreshHead myRefreshHead = (MyRefreshHead) view.findViewById(R.id.swipe_refresh_header);
-        MyRefreshHead myRefreshHead = new MyRefreshHead(getContext());
-        myRefreshHead.setPadding(20,20,20,20);
-        myRefreshHead.setGravity(Gravity.CENTER);
-        myRefreshHead.setText("下拉刷新");
-        myRefreshHead.setTextColor(Color.parseColor("#D81B60"));
-        //刷新尾部设置
-        MyRefreshFooter myRefreshFooter = new MyRefreshFooter(getContext());
-        myRefreshFooter.setPadding(20,20,20,20);
-        myRefreshFooter.setGravity(Gravity.CENTER);
-        myRefreshFooter.setText("上拉加载更多");
-        myRefreshFooter.setTextColor(Color.parseColor("#D81B60"));
-        swipeToLoadLayout.setRefreshHeaderView(myRefreshHead);
-        swipeToLoadLayout.setLoadMoreFooterView(myRefreshFooter);
-        //下拉刷新
-        swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Message message = new Message();
-                message.what = REFRESH_POST_DATA;
-                handler.sendMessage(message);
-            }
-        });
-        //下拉加载更多
-        swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                Message message = new Message();
-                message.what = LOAD_MORE_DATA;
-                handler.sendMessage(message);
-            }
-        });
+            swipeToLoadLayout = view.findViewById(R.id.c_swipeToLoadLayout);
+            //刷新头部设置
+            //MyRefreshHead myRefreshHead = (MyRefreshHead) view.findViewById(R.id.swipe_refresh_header);
+            MyRefreshHead myRefreshHead = new MyRefreshHead(getContext());
+            myRefreshHead.setPadding(20,20,20,20);
+            myRefreshHead.setGravity(Gravity.CENTER);
+            myRefreshHead.setText("下拉刷新");
+            myRefreshHead.setTextColor(Color.parseColor("#D81B60"));
+            //刷新尾部设置
+            MyRefreshFooter myRefreshFooter = new MyRefreshFooter(getContext());
+            myRefreshFooter.setPadding(20,20,20,20);
+            myRefreshFooter.setGravity(Gravity.CENTER);
+            myRefreshFooter.setText("上拉加载更多");
+            myRefreshFooter.setTextColor(Color.parseColor("#D81B60"));
+            swipeToLoadLayout.setRefreshHeaderView(myRefreshHead);
+            swipeToLoadLayout.setLoadMoreFooterView(myRefreshFooter);
+            //下拉刷新
+            swipeToLoadLayout.setOnRefreshListener(new OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    Message message = new Message();
+                    message.what = REFRESH_POST_DATA;
+                    handler.sendMessage(message);
+                }
+            });
+            //下拉加载更多
+            swipeToLoadLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+                @Override
+                public void onLoadMore() {
+                    Message message = new Message();
+                    message.what = LOAD_MORE_DATA;
+                    handler.sendMessage(message);
+                }
+            });
 
-        //初始化其它控件
-        progressBar = (ProgressBar) view.findViewById(R.id.post_wait);
+            //初始化其它控件
+            progressBar = (ProgressBar) view.findViewById(R.id.post_wait);
 
-        //swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.community_swipe_refresh);
-        //设置刷新事件
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                Message message = new Message();
-//                message.what = REFRESH_POST_DATA;
-//                handler.sendMessage(message);
-//            }
-//        });
+        }
+
         return view;
+    }
+
+    //TODO：在这里清除了缓存 没有测试过
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        GlideUtil.clearMemoryCache(getContext());
+        GlideUtil.clearFileCache(getContext());
     }
 
     public void setManager(StaggeredGridLayoutManager manager) {
@@ -282,6 +286,15 @@ public class PostFragment extends Fragment {
 //        message.what = FIRST_POST_DATA;
 //        handler.sendMessage(message);
 
+    }
+
+    //修改了碎片的切换方式
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (null != view) {
+            ((ViewGroup) view.getParent()).removeView(view);
+        }
     }
 
     @Override

@@ -61,7 +61,7 @@ import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadFileListener;
-
+//社区碎片
 public class CommunityActivity extends AppCompatActivity {
     private EditText text;
 
@@ -104,7 +104,10 @@ public class CommunityActivity extends AppCompatActivity {
         pagerAdapter = new CommunityFragmentAdapter(fragments,titles,getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+
     }
+
 
     private void refreshList() {
         new Thread(new Runnable() {

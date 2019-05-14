@@ -14,11 +14,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mysports.android.R;
+import com.mysports.android.RecordListActivity;
+import com.mysports.android.RecordShowActivity;
+import com.mysports.android.bomb.Record;
 import com.mysports.android.map.DbAdapter;
 import com.mysports.android.map.PathRecord;
+import com.mysports.android.map.Util;
 import com.mysports.android.util.HttpUtil;
 
 
@@ -47,7 +52,12 @@ public class OneDataActivity extends AppCompatActivity {
     private TextView quoteText;
     private TextView quoteAuthorText;
 
+    private ImageView video;
+    private ImageView share;
+
     private String time;
+
+
 
     private void init() {
         //组件初始化
@@ -61,6 +71,9 @@ public class OneDataActivity extends AppCompatActivity {
         calCostText = (TextView) findViewById(R.id.cost_cal_text);
         quoteText = (TextView) findViewById(R.id.quote_text);
         quoteAuthorText = (TextView) findViewById(R.id.quote_author);
+
+        video = (ImageView) findViewById(R.id.record_video);
+        share = (ImageView) findViewById(R.id.share);
         //数据加载
         loadQuote(); //加载句子
         setDate();
@@ -89,9 +102,27 @@ public class OneDataActivity extends AppCompatActivity {
         DbAdapter dbAdapter = new DbAdapter(this.getApplicationContext());
         dbAdapter.open();
         record = dbAdapter.queryRecordById((int)recordID);
-
+        dbAdapter.close();
         init();
 
+        //转到轨迹重放界面
+        video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OneDataActivity.this, RecordShowActivity.class);
+                intent.putExtra("record_id",recordID);
+                startActivity(intent);
+            }
+        });
+
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OneDataActivity.this,RecordPostActivity.class);
+                intent.putExtra("record_id",recordID);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setRecordText() {
@@ -125,6 +156,10 @@ public class OneDataActivity extends AppCompatActivity {
         double km = 1.0* distance / 1000; //公里数
         double kmTime = 1.0 * time / km;
         int kcal = (int)kcal(70,distance);
+        //特殊情况出现时间为0时的处理
+        if (time == 0) {
+            time = 1;
+        }
 
         double avgSpeed = 1.0 * distance / time;
         Log.d("idididid", ""+distance+"m");
@@ -135,6 +170,8 @@ public class OneDataActivity extends AppCompatActivity {
         kmSpeedText.setText(format.format(kmTime*1000));
         avgSpeedText.setText(distanceFormat.format(avgSpeed));
         calCostText.setText(kcal + "千卡");
+
+
     }
 
     private double kcal(float weight,float distance) {
@@ -158,7 +195,9 @@ public class OneDataActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Glide.with(OneDataActivity.this).load(bingPic).into(backgroundPic);
+                Glide.with(OneDataActivity.this).load(bingPic)
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).into(backgroundPic);
             }
         });
     }
@@ -202,5 +241,9 @@ public class OneDataActivity extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void home(View view) {
+        this.finish();
     }
 }

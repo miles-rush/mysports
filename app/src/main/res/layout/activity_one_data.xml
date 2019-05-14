@@ -31,6 +31,14 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginTop="9dp"
+                        android:layout_marginLeft="5dp"
+                        android:onClick="home"
+                        android:src="@mipmap/home"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -38,6 +46,24 @@
                         android:textColor="#fff"
                         android:textSize="20sp"
                         android:text="运动数据"/>
+                    <ImageView
+                        android:id="@+id/record_video"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/share"
+                        android:layout_marginTop="9dp"
+                        android:layout_marginRight="10dp"
+                        android:clickable="true"
+                        android:src="@mipmap/video"/>
+                    <ImageView
+                        android:id="@+id/share"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginTop="9dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:src="@mipmap/share"/>
                     <TextView
                         android:id="@+id/exercise_end_time"
                         android:layout_width="wrap_content"
@@ -46,6 +72,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:textColor="#fff"
+                        android:visibility="invisible"
                         android:textSize="16sp"/>
                 </RelativeLayout>
 

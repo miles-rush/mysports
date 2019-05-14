@@ -11,7 +11,7 @@ public class GlideUtil {
         Glide.with(context)
                 .load(url)
 
-
+                .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
 
                 .into(imageView);

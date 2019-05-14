@@ -60,6 +60,7 @@ public class RecordShowActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_record_show);
         setContentView(R.layout.recorddisplay_activity);
         mMapView = (MapView) findViewById(R.id.map);

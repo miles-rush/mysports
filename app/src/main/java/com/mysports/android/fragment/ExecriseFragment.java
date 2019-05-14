@@ -86,13 +86,23 @@ public class ExecriseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.exercise_frame,container,false);
-        mView = view;
-        init(view);
-        return view;
+        if (null == mView) {
+            mView = inflater.inflate(R.layout.exercise_frame,container,false);
+            init(mView);
+        }
+
+//        mView = view;
+//        init(view);
+        return mView;
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (null != mView) {
+            ((ViewGroup) mView.getParent()).removeView(mView);
+        }
+    }
 
     private void init(final View view) {
         weatherLayout = (ScrollView) view.findViewById(R.id.weather_layout);
