@@ -136,7 +136,7 @@
                 android:layout_toRightOf="@+id/post_location_image"/>
 
             <TextView
-                android:id="@+id/location_text"
+                android:id="@+id/record_location_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"

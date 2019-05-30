@@ -433,15 +433,12 @@ public class PostActivity extends AppCompatActivity implements AMapLocationListe
                 String district = aMapLocation.getDistrict(); //城区信息
                 String street = aMapLocation.getStreet(); //街道信息
                 locationText = city + district + street;
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         location.setText(locationText);
                     }
                 });
-
-
             }else {
                 Log.e("AmapError", "location Error, ErrCode:"
                         + aMapLocation.getErrorCode() + ", errInfo:"

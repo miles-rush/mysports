@@ -59,7 +59,8 @@
         <activity android:name=".DrawActivity" />
         <activity android:name=".SmallActivity.PostActivity" />
         <activity android:name=".SmallActivity.OneDataActivity" />
-        <activity android:name=".SmallActivity.RecordPostActivity"></activity>
+        <activity android:name=".SmallActivity.RecordPostActivity" />
+        <activity android:name=".SmallActivity.DataFormActivity"></activity>
     </application>
 
 </manifest>

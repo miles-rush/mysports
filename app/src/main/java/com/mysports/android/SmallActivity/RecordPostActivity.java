@@ -10,6 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.mysports.android.R;
 import com.mysports.android.bomb.Record;
 import com.mysports.android.bomb.User;
@@ -25,13 +29,13 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 
 //运动记录分享
-public class RecordPostActivity extends AppCompatActivity {
+public class RecordPostActivity extends AppCompatActivity implements AMapLocationListener {
     private TextView showTop;
     private TextView showEnd;
     private EditText editText;
 
     private TextView post;
-
+    private TextView location;
     private PathRecord pathRecord;
     private int recordID;
     @Override
@@ -67,6 +71,11 @@ public class RecordPostActivity extends AppCompatActivity {
                 }
             }
         });
+
+        location = findViewById(R.id.record_location_text);
+        locationText = "定位中...";
+        location.setText(locationText);
+        getLoaction();
     }
 
     private void init() {
@@ -148,12 +157,67 @@ public class RecordPostActivity extends AppCompatActivity {
         return record;
     }
 
+    private String locationText;
+    AMapLocationClient mLocationClient = null;
+    //声明AMapLocationClientOption对象
+    public AMapLocationClientOption mLocationOption = null;
+    //更新定位信息文本
+    public void getLoaction() {
+        setLocation();
+//        location.setText(locationText);
+//        mLocationClient.stopLocation();
+    }
+    //定位参数设置
+    public void setLocation() {
+        //初始化定位
+        mLocationClient = new AMapLocationClient(getApplicationContext());
+        //设置定位回调监听
+        mLocationClient.setLocationListener(this);
+        //初始化AMapLocationClientOption对象
+        mLocationOption = new AMapLocationClientOption();
+        // 同时使用网络定位和GPS定位,优先返回最高精度的定位结果,以及对应的地址描述信息
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。默认连续定位 切最低时间间隔为1000ms
+        //mLocationOption.setInterval(5000);
+        mLocationOption.setOnceLocation(true);
+        //设置是否返回地址信息（默认返回地址信息）
+        mLocationOption.setNeedAddress(true);
+        //关闭缓存机制 默认开启 ，在高精度模式和低功耗模式下进行的网络定位结果均会生成本地缓存,不区分单次定位还是连续定位。GPS定位结果不会被缓存。
+        /*mLocationOption.setLocationCacheEnable(false);*/
+        //给定位客户端对象设置定位参数
+        mLocationClient.setLocationOption(mLocationOption);
+        //启动定位
+        mLocationClient.startLocation();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mLocationClient.stopLocation();
+    }
 
-
-
-
-
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (aMapLocation!=null){
+            if (aMapLocation.getErrorCode() ==0) {
+                Log.d("location", "定位成功");
+                String city = aMapLocation.getCity(); //城市信息
+                String district = aMapLocation.getDistrict(); //城区信息
+                String street = aMapLocation.getStreet(); //街道信息
+                locationText = city + district + street;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        location.setText(locationText);
+                    }
+                });
+            }else {
+                Log.e("AmapError", "location Error, ErrCode:"
+                        + aMapLocation.getErrorCode() + ", errInfo:"
+                        + aMapLocation.getErrorInfo());
+            }
+        }
+    }
 
     public void recordFinish(View view) {
         this.finish();

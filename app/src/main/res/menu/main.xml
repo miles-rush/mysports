@@ -10,4 +10,7 @@
     <item
         android:id="@+id/exercise_record"
         android:title="运动记录"/>
+    <item
+        android:id="@+id/data_form"
+        android:title="数据分析"/>
 </menu>

@@ -29,6 +29,7 @@ import com.mysports.android.IndexActivity;
 import com.mysports.android.R;
 import com.mysports.android.RecordActivity;
 import com.mysports.android.RecordListActivity;
+import com.mysports.android.SmallActivity.DataFormActivity;
 import com.mysports.android.gson.Forecast;
 import com.mysports.android.gson.Weather;
 import com.mysports.android.util.HttpUtil;
@@ -174,6 +175,12 @@ public class ExecriseFragment extends Fragment {
                         Intent intent_record = new Intent(getActivity(),RecordListActivity.class);
                         startActivity(intent_record);
                         break;
+                    case R.id.data_form:
+                        Intent intent_form = new Intent(getActivity(),DataFormActivity.class);
+                        startActivity(intent_form);
+                        break;
+                        default:
+                            break;
                 }
                 return true;
             }

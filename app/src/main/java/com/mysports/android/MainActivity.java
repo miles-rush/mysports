@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         Bmob.initialize(this,"4ba682d489877d786b2139b0db2e4af9");
         setContentView(R.layout.activity_main);
         //Bmob.initialize(this,"4ba682d489877d786b2139b0db2e4af9");
