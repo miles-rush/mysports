@@ -6,7 +6,7 @@
     <RelativeLayout
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="48dp" 
+        android:layout_height="48dp"
         android:background="@drawable/title_background"
         android:onClick="onBackClick"
         android:visibility="gone">
@@ -28,7 +28,7 @@
             android:gravity="center"
             android:orientation="vertical"
             android:paddingLeft="5dp"
-            android:paddingStart="5dp" 
+            android:paddingStart="5dp"
             android:textOn="结束运动"
             android:textOff="开始运动"
             android:layout_toRightOf="@+id/left_of_back"
@@ -67,7 +67,7 @@
             android:descendantFocusability="beforeDescendants"
             android:gravity="center_vertical|right"
             android:orientation="horizontal"
-            android:paddingRight="5dp" 
+            android:paddingRight="5dp"
             android:onClick="record">
 
             <TextView
@@ -82,7 +82,7 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <com.amap.api.maps.MapView 
+    <com.amap.api.maps.MapView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/map"
         android:layout_width="match_parent"
@@ -288,7 +288,16 @@
 
 
     </LinearLayout>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/play_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="54dp"
+        android:layout_alignParentBottom="true"
+        android:clickable="true"
+        android:layout_alignParentLeft="true"
+        android:src="@mipmap/music"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_start"

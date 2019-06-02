@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -44,12 +45,23 @@ import com.mysports.android.map.DbAdapter;
 import com.mysports.android.map.PathRecord;
 import com.mysports.android.map.PathSmoothTool;
 import com.mysports.android.map.Util;
+import com.mysports.android.util.HttpUtil;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 /*
 * 运动界面
 * */
@@ -106,6 +118,8 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
 
     private FloatingActionButton pause;
 
+    private FloatingActionButton play;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +129,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         mMapView.onCreate(savedInstanceState);// 此方法必须重写
         UiSettings uiSettings = mMapView.getMap().getUiSettings();
         uiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
+        loadMusicUrl();
         init();
         initpolyline();
     }
@@ -147,6 +162,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                     altitude.setText(""+altitude_num);
 
                     break;
+
                     default:
                         break;
 
@@ -199,6 +215,7 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
         start = (FloatingActionButton) findViewById(R.id.floating_start);
         stop = (FloatingActionButton) findViewById(R.id.floating_stop);
         pause = (FloatingActionButton) findViewById(R.id.floating_pause);
+        play = (FloatingActionButton) findViewById(R.id.play_music);
         //speed_hour = (TextView) findViewById(R.id.speed_hour);
 
         if (mAMap == null) {
@@ -319,8 +336,50 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
                         }).show();
             }
         });
-    }
 
+
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //设置线程在当前音乐播放完毕后 继续播放
+                if (musicinit == false) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                try{
+                                    Thread.sleep(1000);
+                                    if (playing) {
+                                        if (!mediaPlayer.isPlaying()) {
+                                            mediaPlayer.reset();
+                                            initMediaPlayer();
+                                            mediaPlayer.start();
+                                        }
+                                    }
+                                }catch (Exception e) {
+
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
+                    }).start();
+                }
+
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                    playing = false;
+                }else {
+                    mediaPlayer.start();
+                    playing = true;
+                    musicinit = true;
+                }
+
+            }
+        });
+    }
+    private boolean musicinit = false;
+    private boolean playing = false; //音乐播放控制
     private long recordID;
     //存储记录到本机
     protected void saveRecord(List<AMapLocation> list, String time) {
@@ -478,6 +537,10 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
     protected void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
     }
 
     //接口实现
@@ -687,5 +750,67 @@ public class RecordActivity extends AppCompatActivity implements LocationSource,
             distance = distance + to.getDistance();
         }
         return distance;
+    }
+
+
+
+    //音乐相关
+    private List<String> musicUrls = new ArrayList<>();
+    private void loadMusicUrl() {
+        String url = "https://api.mlwei.com/music/api/?key=523077333&cache=0&type=songlist&id=6938020960&size=mp3";
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String resultText = response.body().string();
+                parseJSONData(resultText);
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void parseJSONData(String json) {
+        try{
+            JSONObject object = new JSONObject(json);
+            String body = object.getString("Body");
+            JSONArray jsonArray = new JSONArray(body);
+            for (int i=0;i<jsonArray.length();i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                musicUrls.add(jsonObject.getString("url"));
+                Log.d("num", "parseJSONData: "+jsonObject.getString("url"));
+            }
+            Log.d("num", "parseJSONData: "+musicUrls.size());
+            initMediaPlayer();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private MediaPlayer mediaPlayer = new MediaPlayer();
+
+    private void initMediaPlayer() {
+        String url = getRandomUrl();
+        try{
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.prepare();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private String getRandomUrl() {
+        int size = musicUrls.size();
+        if (size == 0) {
+            return null;
+        }
+        Random random = new Random();
+        int randomNum = random.nextInt(size);
+        if (size > 0){
+            return musicUrls.get(randomNum);
+        }
+        return null;
     }
 }
