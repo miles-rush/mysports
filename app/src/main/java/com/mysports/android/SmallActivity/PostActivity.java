@@ -145,54 +145,88 @@ public class PostActivity extends AppCompatActivity implements AMapLocationListe
                         return;
                     }
                     //上传数据-初始数据填入
-                    Post post = new Post();
+                    final Post post = new Post();
                     post.setContent(content.getText().toString().trim());
                     post.setPageView(0);
                     post.setAuthor(BmobUser.getCurrentUser(User.class));
-                    post.save(new SaveListener<String>() {
+                    //先上传图片 post保存图片的url
+                    final BmobFile pic = new BmobFile(new File(imagePath));
+                    pic.uploadblock(new UploadFileListener() {
                         @Override
-                        public void done(final String s, BmobException e) {
-                            if (e == null){
-                                final BmobFile pic = new BmobFile(new File(imagePath));
-                                pic.uploadblock(new UploadFileListener() {
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                //图片上载完毕后进行动态发布
+                                post.setPicUrl(pic.getFileUrl());
+                                post.save(new SaveListener<String>() {
                                     @Override
-                                    public void done(BmobException e) {
-                                        if (e == null){
-                                            //照片上传后进行关联
-                                            Post p = new Post();
-                                            p.setObjectId(s);
-                                            PostImage postImage = new PostImage();
-                                            postImage.setPic(pic);
-                                            postImage.setPost(p);
-                                            //关联后上传数据
-                                            postImage.save(new SaveListener<String>() {
-                                                @Override
-                                                public void done(String s, BmobException e) {
-                                                    if (e != null){
-                                                        Toast.makeText(PostActivity.this,"图片关联失败"+e.getMessage(),Toast.LENGTH_LONG).show();
-                                                    }
-                                                }
-                                            });
-                                        }else {
-                                            Toast.makeText(PostActivity.this,"图片上传失败"+e.getMessage(),Toast.LENGTH_LONG).show();
+                                    public void done(String s, BmobException e) {
+                                        if (e == null) {
+                                            Toast.makeText(PostActivity.this,"动态已经发布",Toast.LENGTH_LONG).show();
+                                            imagePath = null; //发布动态后清除数据
+                                            //回到社区
+                                            finish();
+                                        } else {
+                                            Log.d("动态发布失败", "done: "+e.getMessage());
+                                            Snackbar.make(v,"动态发布失败"+e.getMessage(),Snackbar.LENGTH_LONG).show();
                                         }
                                     }
                                 });
-                                Toast.makeText(PostActivity.this,"动态已经发布",Toast.LENGTH_LONG).show();
-                                imagePath = null; //发布动态后清除数据
-                                //回到社区
-                                finish();
                             }else {
-                                Log.d("动态发布失败", "done: "+e.getMessage());
-                                Snackbar.make(v,"动态发布失败"+e.getMessage(),Snackbar.LENGTH_LONG).show();
+                                Toast.makeText(PostActivity.this,"图片上传失败",Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
+
+
+
+
+
+//                    post.save(new SaveListener<String>() {
+//                        @Override
+//                        public void done(final String s, BmobException e) {
+//                            if (e == null){
+//                                final BmobFile pic = new BmobFile(new File(imagePath));
+//                                pic.uploadblock(new UploadFileListener() {
+//                                    @Override
+//                                    public void done(BmobException e) {
+//                                        if (e == null){
+//                                            //照片上传后进行关联
+//                                            Post p = new Post();
+//                                            p.setObjectId(s);
+//                                            PostImage postImage = new PostImage();
+//                                            postImage.setPic(pic);
+//                                            postImage.setPost(p);
+//                                            //关联后上传数据
+//                                            postImage.save(new SaveListener<String>() {
+//                                                @Override
+//                                                public void done(String s, BmobException e) {
+//                                                    if (e != null){
+//                                                        Toast.makeText(PostActivity.this,"图片关联失败"+e.getMessage(),Toast.LENGTH_LONG).show();
+//                                                    }
+//                                                }
+//                                            });
+//                                        }else {
+//                                            Toast.makeText(PostActivity.this,"图片上传失败"+e.getMessage(),Toast.LENGTH_LONG).show();
+//                                        }
+//                                    }
+//                                });
+//                                Toast.makeText(PostActivity.this,"动态已经发布",Toast.LENGTH_LONG).show();
+//                                imagePath = null; //发布动态后清除数据
+//                                //回到社区
+//                                finish();
+//                            }else {
+//                                Log.d("动态发布失败", "done: "+e.getMessage());
+//                                Snackbar.make(v,"动态发布失败"+e.getMessage(),Snackbar.LENGTH_LONG).show();
+//                            }
+//                        }
+//                    });
                 }else {
                     Snackbar.make(v,"你还没有添加内容呢...",Snackbar.LENGTH_LONG).show();
                 }
             }
         });
+
+
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

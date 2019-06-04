@@ -97,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (BmobUser.isLogin()) {
+                    BmobUser.logOut();
+                }
                 User user = new User();
                 user.setUsername(account.getText().toString().trim());
                 user.setPassword(password.getText().toString().trim());

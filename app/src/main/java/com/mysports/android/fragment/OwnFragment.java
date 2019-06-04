@@ -18,6 +18,7 @@ import com.mysports.android.MainActivity;
 import com.mysports.android.R;
 import com.mysports.android.SmallActivity.OneDataActivity;
 
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 
 public class OwnFragment extends Fragment {
@@ -60,6 +61,7 @@ public class OwnFragment extends Fragment {
                 editor.apply();
                 Intent intent = new Intent(getActivity(),MainActivity.class);
                 startActivity(intent);
+                BmobUser.logOut();
                 getActivity().finish();
             }
         });
@@ -69,7 +71,6 @@ public class OwnFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),OneDataActivity.class);
                 startActivity(intent);
-
             }
         });
     }

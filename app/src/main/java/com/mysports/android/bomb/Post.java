@@ -1,5 +1,6 @@
 package com.mysports.android.bomb;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +14,25 @@ public class Post extends BmobObject {
 
     private Integer pageView;
 
+    private String picUrl; //图片地址
+
+
     private List<String> pics; //本地用
     public Post() {
         content = null;
         author = null;
         pageView = null;
         pics = new ArrayList<String>();
+    }
+
+
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
     }
 
     public List<String> getPics() {

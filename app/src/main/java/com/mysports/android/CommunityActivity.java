@@ -61,7 +61,7 @@ import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadFileListener;
-//社区碎片
+//社区总界面
 public class CommunityActivity extends AppCompatActivity {
     private EditText text;
 

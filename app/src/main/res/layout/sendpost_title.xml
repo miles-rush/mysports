@@ -20,6 +20,7 @@
         android:textColor="@color/colorBlack"
         android:textStyle="bold"
         android:layout_toRightOf="@+id/post_return_text"
+        android:layout_marginLeft="15dp"
         android:layout_centerVertical="true"
         android:text="  发布动态" />
 

@@ -1,8 +1,10 @@
 package com.mysports.android.Community;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.CardView;
@@ -22,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.mysports.android.R;
+import com.mysports.android.SmallActivity.PostItemActivity;
 import com.mysports.android.bomb.Community;
 import com.mysports.android.bomb.Post;
 import com.mysports.android.media.GlideUtil;
@@ -84,13 +87,16 @@ public class CommunityItemAdapter extends RecyclerView.Adapter<CommunityItemAdap
         }
         final View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.community_item,viewGroup,false);
         final ViewHolder viewHolder = new ViewHolder(view);
-
+        //TODO:这里添加社区界面2的点击事件
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Post post = itemlist.get((Integer)v.getTag());
-                Snackbar.make(v,"暂时只显示部分数据:"+post.getContent(),Snackbar.LENGTH_LONG).show();
+                String postID = post.getObjectId(); //动态的ID
+                Intent intent = new Intent(v.getContext(),PostItemActivity.class);
+                intent.putExtra("ID",postID);
+                v.getContext().startActivity(intent);
+                //Snackbar.make(v,"暂时只显示部分数据:"+post.getContent(),Snackbar.LENGTH_LONG).show();
             }
         });
         return viewHolder;
@@ -109,10 +115,21 @@ public class CommunityItemAdapter extends RecyclerView.Adapter<CommunityItemAdap
 
         viewHolder.postImage.setImageDrawable(null); //重置
 
-        final List<String> imagePath = post.getPics();
+        //final List<String> imagePath = post.getPics();
+
+
+        //对新数据和旧数据的差异处理
+        String url = "";
+        if (post.getPicUrl() != null) {
+            url = post.getPicUrl();
+        }else {
+            url = post.getPics().get(0);
+        }
+
+
         rlp = (LinearLayout.LayoutParams) viewHolder.postImage.getLayoutParams();
         radio = 0;
-        if (imagePath.size() > 0) {
+        if (!url.equals("")) {
 //            Glide.with(context).load(imagePath.get(0)).asBitmap().into(new SimpleTarget<Bitmap>() {
 //                @Override
 //                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -131,25 +148,10 @@ public class CommunityItemAdapter extends RecyclerView.Adapter<CommunityItemAdap
 //                    Log.d("图框高宽", ""+viewHolder.postImage.getHeight()+" "+viewHolder.postImage.getWidth());
 //                }
 //            });
-            GlideUtil.initImageWithFileCache(context,imagePath.get(0),viewHolder.postImage);
+            GlideUtil.initImageWithFileCache(context,url,viewHolder.postImage);
 
         }
 
-
-
-
-//        for (ImageView v:viewHolder.imageList) {
-//            if (v.getDrawable() != null) {
-//                v.setImageDrawable(null);
-//            }
-//        }
-//
-//        Log.d("imagenum", "onBindViewHolder: "+imagePath.size());
-//        Log.d("image", "onBindViewHolder: "+viewHolder.imageList.size());
-//        for (int j=0;j<imagePath.size();j++) {
-//            GlideUtil.initImageWithFileCache(context,imagePath.get(j),viewHolder.imageList.get(j));
-//        }
-//        Log.d("bind", "onBindViewHolder: 1");
     }
 
     @Override

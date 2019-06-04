@@ -5,29 +5,22 @@ import java.util.List;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
-
+//评论
 public class Comment extends BmobObject {
-    private String content;
+    private String content; //评论内容
 
-    private User user;
+    private User user; //发布评论的人
 
-    private Post post;
+    private Post post; //评论的帖子
 
-    private List<BmobFile> pics; //本地用
+    private String toWho;
 
-    public Comment() {
-        content = null;
-        user = null;
-        post = null;
-        pics = new ArrayList<BmobFile>();
+    public String getToWho() {
+        return toWho;
     }
 
-    public List<BmobFile> getPics() {
-        return pics;
-    }
-
-    public void setPics(List<BmobFile> pics) {
-        this.pics = pics;
+    public void setToWho(String toWho) {
+        this.toWho = toWho;
     }
 
     public String getContent() {

@@ -46,7 +46,7 @@ import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-
+//社区界面2
 public class PostFragment extends Fragment {
     private RecyclerView recyclerView;
     private CommunityItemAdapter adapter;
@@ -394,7 +394,7 @@ public class PostFragment extends Fragment {
                     if (postList.size() > 0) {
                         postList.clear();
                     }
-
+                    //旧的数据需要使用下列方法加载图片链接 新上传的数据无需进行图片地址加载
                     for (final Post post : list) {
                         Post p = new Post();
                         p.setObjectId(post.getObjectId());
