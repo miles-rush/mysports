@@ -66,7 +66,6 @@ public class PostItemActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_post_item);
-
         ID = getIntent().getStringExtra("ID");
         init();
         downloadPost();
