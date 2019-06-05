@@ -19,6 +19,7 @@ import com.mysports.android.SmallActivity.PostActivity;
 import com.mysports.android.bomb.Community;
 import com.mysports.android.fragment.CommunityFragment;
 import com.mysports.android.fragment.ExecriseFragment;
+import com.mysports.android.fragment.MediaFragment;
 import com.mysports.android.fragment.OwnFragment;
 import com.mysports.android.fragment.PostFragment;
 
@@ -61,7 +62,7 @@ public class IndexActivity extends AppCompatActivity {
         mainViewPager = (ViewPager) findViewById(R.id.main_viewpage);
         mainViewPager.setOffscreenPageLimit(2);
         fragments.add(new ExecriseFragment());
-        fragments.add(new Fragment());
+        fragments.add(new MediaFragment());
         fragments.add(new CommunityFragment());
         fragments.add(new OwnFragment());
 
