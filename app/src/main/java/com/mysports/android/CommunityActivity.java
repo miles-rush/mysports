@@ -44,6 +44,7 @@ import com.mysports.android.bomb.Post;
 import com.mysports.android.bomb.PostImage;
 import com.mysports.android.bomb.User;
 import com.mysports.android.fragment.PostFragment;
+import com.mysports.android.fragment.RecordFragment;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +62,7 @@ import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UploadFileListener;
-//社区总界面
+//社区总界面---这个文件已经取消使用
 public class CommunityActivity extends AppCompatActivity {
     private EditText text;
 
@@ -92,15 +93,22 @@ public class CommunityActivity extends AppCompatActivity {
 
     private CommunityFragmentAdapter pagerAdapter;
 
+    private RecordFragment recordFragment;
+    private PostFragment postFragment;
+
     private void init(){
         postList = new ArrayList<Post>();
         tabLayout = (TabLayout) findViewById(R.id.tab);
         viewPager = (ViewPager) findViewById(R.id.viewpage);
+        viewPager.setOffscreenPageLimit(2);
+        //TODO：在这里设置社区的几个界面
+        recordFragment = new RecordFragment();
         fragments.add(new Fragment());
-        PostFragment postFragment = new PostFragment();
-        fragments.add(postFragment);
+        //postFragment = new PostFragment();
+        fragments.add(new RecordFragment());
         fragments.add(new Fragment());
         fragments.add(new Fragment());
+
         pagerAdapter = new CommunityFragmentAdapter(fragments,titles,getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

@@ -15,8 +15,18 @@ public class Record extends BmobObject {
 
     private String Text;
     private User author;
+
+    private Integer goods;
     public Record() {
 
+    }
+
+    public Integer getGoods() {
+        return goods;
+    }
+
+    public void setGoods(Integer goods) {
+        this.goods = goods;
     }
 
     public String getText() {

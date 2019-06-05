@@ -154,6 +154,7 @@ public class RecordPostActivity extends AppCompatActivity implements AMapLocatio
         record.setLocations(Util.getPathLineString(pathRecord.getPathline()));
         record.setStartPoint(Util.amapLocationToString(pathRecord.getStartpoint()));
         record.setEndPoint(Util.amapLocationToString(pathRecord.getEndpoint()));
+        record.setGoods(0);
         return record;
     }
 

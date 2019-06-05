@@ -39,12 +39,16 @@ public class CommunityFragment extends Fragment {
         return view;
     }
 
+
     private void init(View view){
         tabLayout = (TabLayout) view.findViewById(R.id.tab);
         viewPager = (ViewPager) view.findViewById(R.id.viewpage);
         viewPager.setOffscreenPageLimit(2);
-        fragments.add(new Fragment());
         PostFragment postFragment = new PostFragment();
+        RecordFragment recordFragment = new RecordFragment();
+
+
+        fragments.add(recordFragment);
         fragments.add(postFragment);
         fragments.add(new Fragment());
         fragments.add(new Fragment());
