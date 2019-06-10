@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/lui_image"
+            android:layout_margin="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/main_pic"/>
+
+        <TextView
+            android:id="@+id/lui_name"
+            android:layout_toRightOf="@+id/lui_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="#EE9A00"
+            android:textSize="20dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="8dp"
+            android:text="name"/>
+
+        <TextView
+            android:id="@+id/lui_time"
+            android:layout_below="@+id/lui_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/lui_image"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="3dp"
+            android:textSize="10dp"
+            android:text="201625 4555"/>
+
+
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

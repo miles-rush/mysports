@@ -123,7 +123,9 @@ public class CommunityItemAdapter extends RecyclerView.Adapter<CommunityItemAdap
         if (post.getPicUrl() != null) {
             url = post.getPicUrl();
         }else {
-            url = post.getPics().get(0);
+            if (post.getPics().size() > 0) {
+                url = post.getPics().get(0);
+            }
         }
 
 

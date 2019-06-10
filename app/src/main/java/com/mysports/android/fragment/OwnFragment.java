@@ -25,8 +25,10 @@ import com.mysports.android.MainActivity;
 import com.mysports.android.R;
 import com.mysports.android.SmallActivity.DataFormActivity;
 import com.mysports.android.SmallActivity.OneDataActivity;
+import com.mysports.android.SmallActivity.UserShowActivity;
 import com.mysports.android.bomb.User;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
@@ -70,6 +72,14 @@ public class OwnFragment extends Fragment {
         name = view.findViewById(R.id.user_name);
         name.setText(getActivity().getIntent().getStringExtra("name"));
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),UserShowActivity.class);
+                intent.putExtra("ID",BmobUser.getCurrentUser(User.class).getObjectId());
+                startActivity(intent);
+            }
+        });
         pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -28,7 +28,7 @@ public class CommunityFragment extends Fragment {
 
     private ArrayList<Fragment> fragments = new ArrayList<>();
 
-    private String[] titles = new String[]{"关注","动态","附近","消息"};
+    private String[] titles = new String[]{"足迹","动态","关注","消息"};
 
     private CommunityFragmentAdapter pagerAdapter;
     @Nullable
@@ -46,11 +46,10 @@ public class CommunityFragment extends Fragment {
         viewPager.setOffscreenPageLimit(2);
         PostFragment postFragment = new PostFragment();
         RecordFragment recordFragment = new RecordFragment();
-
-
+        LikeFragment likeFragment = new LikeFragment();
         fragments.add(recordFragment);
         fragments.add(postFragment);
-        fragments.add(new Fragment());
+        fragments.add(likeFragment);
         fragments.add(new Fragment());
         pagerAdapter = new CommunityFragmentAdapter(fragments,titles,getActivity().getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);

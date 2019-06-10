@@ -223,7 +223,8 @@ public class PostItemActivity extends AppCompatActivity {
 
     //关注前判断
     private boolean check = false;
-    private boolean checkLike() {
+    private void checkLike() {
+        check = false;
         BmobQuery<User> query = new BmobQuery<>();
         User user = new User();
         user.setObjectId(downloadPost.getAuthor().getObjectId());
@@ -236,15 +237,19 @@ public class PostItemActivity extends AppCompatActivity {
                         if (u.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())) {
                             check = true;
                             doneLike();
+                            return;
                         }
                     }
+                    check = false;
+                    doneLike();
                 } else {
                     Toast.makeText(PostItemActivity.this,"关注信息拉取失败",Toast.LENGTH_SHORT).show();
                     check = false;
+                    //doneLike();
                 }
             }
         });
-        return check;
+
     }
 
     //由传入ID下载动态数据到本地
