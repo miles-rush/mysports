@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/ni_icon"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/message_icon"
+            />
+
+        <TextView
+            android:id="@+id/ni_content"
+            android:layout_toRightOf="@+id/ni_icon"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="10dp"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="收到一条点赞"
+            android:textSize="15dp"/>
+
+        <TextView
+            android:id="@+id/ni_from"
+            android:layout_toLeftOf="@id/ni_delete"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="5dp"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="From:abbb"
+            android:textSize="12dp"/>
+
+        <TextView
+            android:id="@+id/ni_time"
+            android:layout_toLeftOf="@id/ni_delete"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="From:abbb"
+            android:textSize="8dp"/>
+
+
+        <ImageView
+            android:id="@+id/ni_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/delete_message"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"/>
+
+
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -22,6 +22,7 @@ import com.mysports.android.bomb.LikesRelation;
 import com.mysports.android.bomb.Post;
 import com.mysports.android.bomb.User;
 import com.mysports.android.media.GlideUtil;
+import com.mysports.android.util.NotiferUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,6 +116,8 @@ public class PostItemActivity extends AppCompatActivity {
             @Override
             public void done(BmobException e) {
                 if (e == null) {
+                    //TODO:消息通知
+                    NotiferUtil.notiferPostGood(ID, downloadPost.getAuthor().getObjectId());
                     Toast.makeText(PostItemActivity.this,"点赞成功",Toast.LENGTH_SHORT).show();
                     runOnUiThread(new Runnable() {
                         @Override
@@ -146,6 +149,8 @@ public class PostItemActivity extends AppCompatActivity {
                     if (e == null) {
                         //TODO:刷新评论区
                         downloadComments();
+                        //TODO:消息通知
+                        NotiferUtil.notiferPostComment(ID, downloadPost.getAuthor().getObjectId());
                         Toast.makeText(PostItemActivity.this,"评论发布成功",Toast.LENGTH_SHORT).show();
                     }else {
                         Toast.makeText(PostItemActivity.this,"评论发布失败",Toast.LENGTH_SHORT).show();
@@ -209,6 +214,8 @@ public class PostItemActivity extends AppCompatActivity {
             @Override
             public void done(String s, BmobException e) {
                 if (e == null) {
+                    //TODO
+                    NotiferUtil.notiferGetLike(ID, downloadPost.getAuthor().getObjectId());
                     Toast.makeText(getApplicationContext(),"关注成功",Toast.LENGTH_SHORT).show();
                 }else {
                     Toast.makeText(getApplicationContext(),"关注失败",Toast.LENGTH_SHORT).show();

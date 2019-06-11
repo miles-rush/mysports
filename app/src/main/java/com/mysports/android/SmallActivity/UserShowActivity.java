@@ -27,6 +27,7 @@ import com.mysports.android.bomb.Record;
 import com.mysports.android.bomb.User;
 import com.mysports.android.layout.MyRefreshFooter;
 import com.mysports.android.layout.MyRefreshHead;
+import com.mysports.android.util.NotiferUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,6 +224,8 @@ public class UserShowActivity extends AppCompatActivity {
             public void done(String s, BmobException e) {
                 if (e == null) {
                     Toast.makeText(getApplicationContext(),"关注成功",Toast.LENGTH_SHORT).show();
+                    //TODO:消息通知
+                    NotiferUtil.notiferGetLike(null, ID);
                     likeNum++;
                     runOnUiThread(new Runnable() {
                         @Override

@@ -21,6 +21,7 @@ import com.mysports.android.R;
 import com.mysports.android.bomb.Message;
 import com.mysports.android.bomb.User;
 import com.mysports.android.layout.MyRefreshHead;
+import com.mysports.android.util.NotiferUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +69,7 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
         adapter = new MessageAdapter(messageList);
         recyclerView.setAdapter(adapter);
-        //recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
 
         //刷新头部设置
         MyRefreshHead myRefreshHead = new MyRefreshHead(this);
@@ -166,6 +167,8 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void done(String s, BmobException e) {
                     if (e == null) {
+                        //TODO:消息通知
+                        NotiferUtil.notiferMessage(null, ID);
                         Toast.makeText(getApplicationContext(),"发送成功",Toast.LENGTH_SHORT).show();
                         loadMessage();
                     }else {

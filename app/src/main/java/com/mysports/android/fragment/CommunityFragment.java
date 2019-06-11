@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.mysports.android.Community.CommunityFragmentAdapter;
 import com.mysports.android.R;
+import com.mysports.android.bomb.Notifier;
 import com.mysports.android.bomb.Post;
 
 import java.util.ArrayList;
@@ -47,10 +48,11 @@ public class CommunityFragment extends Fragment {
         PostFragment postFragment = new PostFragment();
         RecordFragment recordFragment = new RecordFragment();
         LikeFragment likeFragment = new LikeFragment();
+        NotifierFragment notifierFragment = new NotifierFragment();
         fragments.add(recordFragment);
         fragments.add(postFragment);
         fragments.add(likeFragment);
-        fragments.add(new Fragment());
+        fragments.add(notifierFragment);
         pagerAdapter = new CommunityFragmentAdapter(fragments,titles,getActivity().getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
         tabLayout.setupWithViewPager(viewPager);

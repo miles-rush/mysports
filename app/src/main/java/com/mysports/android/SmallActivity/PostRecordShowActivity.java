@@ -30,12 +30,15 @@ import com.amap.api.trace.TraceListener;
 import com.amap.api.trace.TraceLocation;
 import com.mysports.android.R;
 import com.mysports.android.RecordListActivity;
+import com.mysports.android.bomb.Notifier;
 import com.mysports.android.bomb.Record;
+import com.mysports.android.bomb.User;
 import com.mysports.android.map.DbAdapter;
 import com.mysports.android.map.PathRecord;
 import com.mysports.android.map.PathSmoothTool;
 import com.mysports.android.map.TraceRePlay;
 import com.mysports.android.map.Util;
+import com.mysports.android.util.NotiferUtil;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -44,6 +47,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
@@ -149,6 +153,9 @@ public class PostRecordShowActivity extends AppCompatActivity implements
                     @Override
                     public void done(BmobException e) {
                         if (e == null) {
+                            //TODO:添加消息通知
+                            NotiferUtil.notiferRecordGood(ID,
+                                    downloadRecord.getAuthor().getObjectId());
                             Toast.makeText(getApplicationContext(),"点赞成功",Toast.LENGTH_SHORT).show();
                             runOnUiThread(new Runnable() {
                                 @Override

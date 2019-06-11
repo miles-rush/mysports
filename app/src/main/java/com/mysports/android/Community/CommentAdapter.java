@@ -17,6 +17,7 @@ import com.mysports.android.SmallActivity.PostItemActivity;
 import com.mysports.android.bomb.Comment;
 import com.mysports.android.bomb.Post;
 import com.mysports.android.bomb.User;
+import com.mysports.android.util.NotiferUtil;
 
 import java.util.List;
 
@@ -85,7 +86,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                         String text = inputServer.getText().toString().trim();
                         if (text.length() > 0) {
                             int pos = holder.getAdapterPosition();
-                            Comment comment = comments.get(pos);
+                            final Comment comment = comments.get(pos);
                             Post post = new Post();
                             post.setObjectId(comment.getPost().getObjectId());
                             User user = new User();
@@ -102,6 +103,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                                 public void done(String s, BmobException e) {
                                     if (e == null) {
                                         Log.d("comment", "done: "+"success");
+                                        //todo:消息通知-- 这里可能有点问题
+                                        NotiferUtil.notiferCommentComment(comment.getPost().getObjectId(),
+                                                comment.getPost().getAuthor().getObjectId());
                                         Toast.makeText(content,"回复成功",Toast.LENGTH_SHORT).show();
                                         content.downloadComments();
                                     }else {
