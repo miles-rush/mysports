@@ -344,25 +344,25 @@ public class PostFragment extends Fragment {
                 if (e == null) {
                     oldSize = postList.size();
                     //Collections.reverse(postList);
-                    for (final Post post : list) {
-                        Post p = new Post();
-                        p.setObjectId(post.getObjectId());
-                        BmobQuery<PostImage> imageQuery = new BmobQuery<PostImage>();
-                        imageQuery.addWhereEqualTo("post",new BmobPointer(p));
-                        imageQuery.findObjects(new FindListener<PostImage>() {
-                            @Override
-                            public void done(List<PostImage> list, BmobException e) {
-                                for (PostImage postImage:list) {
-                                    final BmobFile bmobFile = postImage.getPic();
-                                    if (bmobFile!=null) {
-                                        post.getPics().add(bmobFile.getFileUrl());
-                                    }
-                                }
-                            }
-                        });
+                    for (Post post : list) {
+//                        Post p = new Post();
+//                        p.setObjectId(post.getObjectId());
+//                        BmobQuery<PostImage> imageQuery = new BmobQuery<PostImage>();
+//                        imageQuery.addWhereEqualTo("post",new BmobPointer(p));
+//                        imageQuery.findObjects(new FindListener<PostImage>() {
+//                            @Override
+//                            public void done(List<PostImage> list, BmobException e) {
+//                                for (PostImage postImage:list) {
+//                                    final BmobFile bmobFile = postImage.getPic();
+//                                    if (bmobFile!=null) {
+//                                        post.getPics().add(bmobFile.getFileUrl());
+//                                    }
+//                                }
+//                            }
+//                        });
                         //加载图片后存入
                         postList.add(post);
-                        Log.d("info", "done: "+post.getContent());
+                        Log.d("info", "done: "+post.getAuthor().getObjectId());
                     }
                     //Collections.reverse(postList);
                     //newSize = postList.size();
@@ -395,25 +395,25 @@ public class PostFragment extends Fragment {
                         postList.clear();
                     }
                     //旧的数据需要使用下列方法加载图片链接 新上传的数据无需进行图片地址加载
-                    for (final Post post : list) {
-                        Post p = new Post();
-                        p.setObjectId(post.getObjectId());
-                        BmobQuery<PostImage> imageQuery = new BmobQuery<PostImage>();
-                        imageQuery.addWhereEqualTo("post",new BmobPointer(p));
-                        imageQuery.findObjects(new FindListener<PostImage>() {
-                            @Override
-                            public void done(List<PostImage> list, BmobException e) {
-                                for (PostImage postImage:list) {
-                                    final BmobFile bmobFile = postImage.getPic();
-                                    if (bmobFile!=null) {
-                                        post.getPics().add(bmobFile.getFileUrl());
-                                    }
-                                }
-                            }
-                        });
+                    for (Post post : list) {
+//                        Post p = new Post();
+//                        p.setObjectId(post.getObjectId());
+//                        BmobQuery<PostImage> imageQuery = new BmobQuery<PostImage>();
+//                        imageQuery.addWhereEqualTo("post",new BmobPointer(p));
+//                        imageQuery.findObjects(new FindListener<PostImage>() {
+//                            @Override
+//                            public void done(List<PostImage> list, BmobException e) {
+//                                for (PostImage postImage:list) {
+//                                    final BmobFile bmobFile = postImage.getPic();
+//                                    if (bmobFile!=null) {
+//                                        post.getPics().add(bmobFile.getFileUrl());
+//                                    }
+//                                }
+//                            }
+//                        });
                         //加载图片后存入
                         postList.add(post);
-                        Log.d("info", "done: "+post.getContent());
+                        Log.d("info", "done: "+post.getAuthor().getObjectId());
                     }
                     //Collections.reverse(postList);
                     newSize = postList.size();

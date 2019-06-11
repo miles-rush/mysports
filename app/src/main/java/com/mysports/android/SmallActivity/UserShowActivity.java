@@ -1,5 +1,6 @@
 package com.mysports.android.SmallActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +21,7 @@ import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.mysports.android.Community.CommunityItemAdapter;
 import com.mysports.android.Community.RecordPostItemAdapter;
 import com.mysports.android.R;
+import com.mysports.android.bomb.LikesRelation;
 import com.mysports.android.bomb.Post;
 import com.mysports.android.bomb.Record;
 import com.mysports.android.bomb.User;
@@ -36,6 +38,7 @@ import cn.bmob.v3.datatype.BmobRelation;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 public class UserShowActivity extends AppCompatActivity {
@@ -45,6 +48,7 @@ public class UserShowActivity extends AppCompatActivity {
 
     private TextView name;
     private TextView time;
+    private TextView likes;
 
     private ImageView unlike;
     private ImageView message;
@@ -77,6 +81,7 @@ public class UserShowActivity extends AppCompatActivity {
                     localUser = user;
                     dataSet();
                     downloadPost();
+                    getNum();
                     //downloadRecord();
                 }else {
                     Toast.makeText(getApplicationContext(),"数据加载失败",Toast.LENGTH_SHORT).show();
@@ -91,6 +96,8 @@ public class UserShowActivity extends AppCompatActivity {
 
         unlike = findViewById(R.id.aus_unlike);
         message = findViewById(R.id.aus_message);
+
+        likes = findViewById(R.id.aus_likes);
 
         change_post = findViewById(R.id.aus_post);
         change_record = findViewById(R.id.aus_record);
@@ -165,45 +172,66 @@ public class UserShowActivity extends AppCompatActivity {
 
             }
         });
+
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),ChatActivity.class);
+                intent.putExtra("ID", ID);
+                startActivity(intent);
+            }
+        });
     }
 
     //取消关注
-    private void doUnLike() {
-        User my = new User();
-        my.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
-        User other = new User();
-        other.setObjectId(ID);
-        BmobRelation relation = new BmobRelation();
-        relation.remove(my);
-        other.setLikes(relation);
-        other.update(new UpdateListener() {
+    private void doUnLike(String id) {
+        LikesRelation relation = new LikesRelation();
+        relation.setObjectId(id);
+        relation.delete(new UpdateListener() {
             @Override
             public void done(BmobException e) {
                 if (e == null) {
+                    likeNum--;
                     Toast.makeText(getApplicationContext(),"取关成功",Toast.LENGTH_SHORT).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            likes.setText("关注:"+likeNum);
+                        }
+                    });
                 }else {
-                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"取关失败",Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
 
+    //关注
     private void doneLike() {
-        User user = new User();
-        user.setObjectId(localUser.getObjectId());
-        BmobRelation relation = new BmobRelation();
-        User my = new User();
-        my.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
-        relation.add(my);
-        user.setLikes(relation);
-        user.update(new UpdateListener() {
+        LikesRelation relation = new LikesRelation();
+        User master = new User();
+        master.setObjectId(localUser.getObjectId());
+        User guest = new User();
+        guest.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
+
+        relation.setMaster(master);
+        relation.setGuest(guest);
+
+        relation.save(new SaveListener<String>() {
             @Override
-            public void done(BmobException e) {
+            public void done(String s, BmobException e) {
                 if (e == null) {
                     Toast.makeText(getApplicationContext(),"关注成功",Toast.LENGTH_SHORT).show();
+                    likeNum++;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            likes.setText("关注:"+likeNum);
+                        }
+                    });
                 }else {
-                    Toast.makeText(getApplicationContext(),"关注失败"+e.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"关注失败",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -212,36 +240,66 @@ public class UserShowActivity extends AppCompatActivity {
 
     private boolean check = false;
     private int likeNum = 0;
-    private void checkLike() {
-        check = false;
-        BmobQuery<User> query = new BmobQuery<>();
+    //关注数量获取
+    private void getNum() {
+        BmobQuery<LikesRelation> query = new BmobQuery<>();
+
         User user = new User();
         user.setObjectId(localUser.getObjectId());
-        query.addWhereRelatedTo("likes", new BmobPointer(user));
-        query.findObjects(new FindListener<User>() {
+        query.addWhereEqualTo("master",user);
+        query.findObjects(new FindListener<LikesRelation>() {
             @Override
-            public void done(List<User> list, BmobException e) {
+            public void done(List<LikesRelation> list, BmobException e) {
                 if (e == null) {
-                    check = false;
-                    for (User u : list) {
-                        likeNum ++ ;
-                        if (u.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())) {
-                            check = true;
+                    likeNum = list.size();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            likes.setText("关注:"+likeNum);
                         }
-                    }
-                    if (check) {
-                        doUnLike();
-                    }else {
-                        doneLike();
-                    }
-                } else {
+                    });
+                }else {
                     Toast.makeText(getApplicationContext(),"关注信息拉取失败",Toast.LENGTH_SHORT).show();
-                    check = false;
-                    //doneLike();
                 }
             }
         });
 
+    }
+    private void checkLike() {
+        User master = new User();
+        master.setObjectId(localUser.getObjectId());
+        User guest = new User();
+        guest.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
+
+        BmobQuery<LikesRelation> eq1 = new BmobQuery<>();
+        eq1.addWhereEqualTo("master",master);
+
+        BmobQuery<LikesRelation> eq2 = new BmobQuery<>();
+        eq2.addWhereEqualTo("guest",guest);
+
+        List<BmobQuery<LikesRelation>> allEq = new ArrayList<>();
+        allEq.add(eq1);
+        allEq.add(eq2);
+
+        BmobQuery<LikesRelation> query = new BmobQuery<>();
+        query.and(allEq);
+
+        query.findObjects(new FindListener<LikesRelation>() {
+            @Override
+            public void done(List<LikesRelation> list, BmobException e) {
+                if (e == null) {
+                    if (list.size() == 0) {
+                        doneLike();
+                    }else {
+                        doUnLike(list.get(0).getObjectId());
+                    }
+                }else {
+                    doneLike();
+                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     }
 

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.mysports.android.Community.CommentAdapter;
 import com.mysports.android.R;
 import com.mysports.android.bomb.Comment;
+import com.mysports.android.bomb.LikesRelation;
 import com.mysports.android.bomb.Post;
 import com.mysports.android.bomb.User;
 import com.mysports.android.media.GlideUtil;
@@ -195,26 +196,22 @@ public class PostItemActivity extends AppCompatActivity {
 
     //添加关注
     private void doneLike() {
-        //下载该帖子主人的信息
-        //TODO:判断是否已经关注
-        if (check) {
-            Toast.makeText(PostItemActivity.this,"你已关注",Toast.LENGTH_SHORT).show();
-            return;
-        }
-        User user = new User();
-        user.setObjectId(downloadPost.getAuthor().getObjectId());
-        BmobRelation relation = new BmobRelation();
-        User my = new User();
-        my.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
-        relation.add(my);
-        user.setLikes(relation);
-        user.update(new UpdateListener() {
+        LikesRelation relation = new LikesRelation();
+        User master = new User();
+        master.setObjectId(downloadPost.getAuthor().getObjectId());
+        User guest = new User();
+        guest.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
+
+        relation.setMaster(master);
+        relation.setGuest(guest);
+
+        relation.save(new SaveListener<String>() {
             @Override
-            public void done(BmobException e) {
+            public void done(String s, BmobException e) {
                 if (e == null) {
-                    Toast.makeText(PostItemActivity.this,"关注成功",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"关注成功",Toast.LENGTH_SHORT).show();
                 }else {
-                    Toast.makeText(PostItemActivity.this,"关注失败"+e.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"关注失败",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -222,34 +219,40 @@ public class PostItemActivity extends AppCompatActivity {
     }
 
     //关注前判断
-    private boolean check = false;
     private void checkLike() {
-        check = false;
-        BmobQuery<User> query = new BmobQuery<>();
-        User user = new User();
-        user.setObjectId(downloadPost.getAuthor().getObjectId());
-        query.addWhereRelatedTo("likes", new BmobPointer(user));
-        query.findObjects(new FindListener<User>() {
+        User master = new User();
+        master.setObjectId(downloadPost.getAuthor().getObjectId());
+        User guest = new User();
+        guest.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
+
+        BmobQuery<LikesRelation> eq1 = new BmobQuery<>();
+        eq1.addWhereEqualTo("master",master);
+
+        BmobQuery<LikesRelation> eq2 = new BmobQuery<>();
+        eq2.addWhereEqualTo("guest",guest);
+
+        List<BmobQuery<LikesRelation>> allEq = new ArrayList<>();
+        allEq.add(eq1);
+        allEq.add(eq2);
+
+        BmobQuery<LikesRelation> query = new BmobQuery<>();
+        query.and(allEq);
+
+        query.findObjects(new FindListener<LikesRelation>() {
             @Override
-            public void done(List<User> list, BmobException e) {
+            public void done(List<LikesRelation> list, BmobException e) {
                 if (e == null) {
-                    for (User u : list) {
-                        if (u.getObjectId().equals(BmobUser.getCurrentUser(User.class).getObjectId())) {
-                            check = true;
-                            doneLike();
-                            return;
-                        }
+                    if (list.size() == 0) {
+                        doneLike();
+                    }else {
+                        Toast.makeText(getApplicationContext(),"你已关注",Toast.LENGTH_SHORT).show();
                     }
-                    check = false;
+                }else {
                     doneLike();
-                } else {
-                    Toast.makeText(PostItemActivity.this,"关注信息拉取失败",Toast.LENGTH_SHORT).show();
-                    check = false;
-                    //doneLike();
+                    Toast.makeText(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
     }
 
     //由传入ID下载动态数据到本地

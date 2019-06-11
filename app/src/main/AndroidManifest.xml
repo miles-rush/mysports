@@ -63,7 +63,8 @@
         <activity android:name=".SmallActivity.DataFormActivity" />
         <activity android:name=".SmallActivity.PostItemActivity" />
         <activity android:name=".SmallActivity.PostRecordShowActivity" />
-        <activity android:name=".SmallActivity.UserShowActivity"></activity>
+        <activity android:name=".SmallActivity.UserShowActivity" />
+        <activity android:name=".SmallActivity.ChatActivity"></activity>
     </application>
 
 </manifest>

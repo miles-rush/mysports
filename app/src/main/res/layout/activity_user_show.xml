@@ -57,6 +57,17 @@
             android:layout_height="wrap_content"
             android:src="@drawable/message"/>
 
+        <TextView
+            android:id="@+id/aus_likes"
+            android:layout_below="@id/aus_message"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="7dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:text="关注:12"/>
+
         <ImageView
             android:id="@+id/aus_post"
             android:layout_marginTop="8dp"

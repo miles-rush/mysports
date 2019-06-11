@@ -18,6 +18,7 @@ import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.mysports.android.Community.UserItemAdpater;
 import com.mysports.android.R;
+import com.mysports.android.bomb.LikesRelation;
 import com.mysports.android.bomb.User;
 import com.mysports.android.layout.MyRefreshHead;
 
@@ -81,25 +82,28 @@ public class LikeFragment extends Fragment {
 
 
     private void downloadData() {
-        BmobQuery<User> query = new BmobQuery<>();
-        final User user = new User();
+        BmobQuery<LikesRelation> relationBmobQuery = new BmobQuery<>();
+        User user = new User();
         user.setObjectId(BmobUser.getCurrentUser(User.class).getObjectId());
-        query.addWhereRelatedTo("likes", new BmobPointer(user));
-        query.findObjects(new FindListener<User>() {
+        relationBmobQuery.addWhereEqualTo("guest", user);
+        relationBmobQuery.include("master");
+
+        relationBmobQuery.findObjects(new FindListener<LikesRelation>() {
             @Override
-            public void done(List<User> list, BmobException e) {
+            public void done(List<LikesRelation> list, BmobException e) {
                 if (e == null) {
                     users.clear();
-                    for (User u : list){
-                        users.add(u);
+                    for (LikesRelation relation : list){
+                        users.add(relation.getMaster());
                     }
                     adpater.notifyDataSetChanged();
                     mainList.setRefreshing(false);
-                } else {
+                }else {
                     Toast.makeText(getContext(),"数据加载失败",Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
     }
 
     @Override

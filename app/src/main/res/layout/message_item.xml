@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/mi_image"
+            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/main_pic"/>
+
+        <TextView
+            android:id="@+id/mi_name"
+            android:layout_toRightOf="@+id/mi_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="#EE9A00"
+            android:textSize="16dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="8dp"
+            android:text="name"/>
+
+        <TextView
+            android:id="@+id/mi_time"
+            android:layout_below="@+id/mi_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/mi_image"
+            android:layout_marginTop="3dp"
+            android:layout_marginLeft="3dp"
+            android:textSize="8dp"
+            android:text="201625 4555"/>
+
+        <TextView
+            android:id="@+id/mi_content"
+            android:layout_toRightOf="@+id/mi_time"
+            android:layout_toLeftOf="@+id/mi_time_right"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16dp"
+            android:text="main text"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:id="@+id/mi_image_right"
+            android:layout_margin="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/main_pic"/>
+
+        <TextView
+            android:id="@+id/mi_name_right"
+            android:layout_toLeftOf="@+id/mi_image_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="#EE9A00"
+            android:textSize="16dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="8dp"
+            android:text="name"/>
+
+        <TextView
+            android:id="@+id/mi_time_right"
+            android:layout_below="@+id/mi_name_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/mi_image_right"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:textSize="8dp"
+            android:text="201625 4555"/>
+
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>
